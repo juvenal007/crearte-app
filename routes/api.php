@@ -79,4 +79,5 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::put('/producto/update/{id}', [ProductoController::class, 'edit']);    
     Route::delete('/producto/delete/{id}', [ProductoController::class, 'delete']);
     Route::get('/producto/pluck', [ProductoController::class, 'pluck']);
+    //SOME
 });
