@@ -76,4 +76,10 @@ class CentroCostoController extends Controller
         }
         
     }
+
+    public function details($id)
+    {
+        $centro_costos = CentroCosto::Where('id', $id)->get();        
+        return response()->json(['response' => ['status' => true,'data' => $centro_costos,'message' => 'Centro de Costos Obtenido']], 200);
+    }
 }

@@ -27,7 +27,8 @@ class ProyectoFactory extends Factory
             'direccion' => $this->faker->address,
             'descripcion' => $this->faker->text(50),
             'telefono_ad' => $this->faker->e164PhoneNumber,
-            'centro_costos_id' => $this->faker->numberBetween($min = 1, $max= 50)
+            'centro_costos_id' => $this->faker->numberBetween($min = 1, $max= 50),
+            'clientes_id' => $this->faker->numberBetween($min = 1, $max= 50)
         ];
     }
 }

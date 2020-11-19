@@ -13,6 +13,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+        // ORDENAR SEEDER DE ACUERDO A LAS RELACIONES, ES DECIR
+        // DESDE LOS MANTENEDORES HACIA LAS TABLAS RELACIONADAS
+        $this->call([
+            UserSeeder::class,
+            EstadoSeeder::class,
+            CentroCostoSeeder::class,            
+            EstadoSeeder::class,
+            ClienteSeeder::class,   
+            ProveedorSeeder::class,  
+            ProductoSeeder::class,       
+            ProyectoSeeder::class,
+            SolicitudSeeder::class,
+        ]);
     }
 }

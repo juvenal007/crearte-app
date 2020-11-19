@@ -21,8 +21,9 @@ class CreateProyectosTable extends Migration
             $table->string('telefono_ad', 16);
             $table->timestamps();
             $table->softDeletes('deleted_at', 0);      
-                  
-            $table->foreignId('centro_costos_id')->constrained();
+            $table->foreignId('centro_costos_id')->constrained()->onDelete('cascade');
+            $table->foreignId('clientes_id')->constrained()->onDelete('cascade');        
+            
         });
     }
 

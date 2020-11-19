@@ -21,13 +21,15 @@ class CentroCosto extends Model
     //ATRIBUTOS DE LA TABLE
     protected $fillable = [
         'nombre',
-        'direccion'
+        'direccion',
+        'centro_costos_id'
     ];
 
     //RELACIÓN INVERSA HACIA CENTRO DE COSTOS
-    public function Proyectos()
+    public function proyectos()
     {
         return $this->hasMany('App\Models\Proyecto', 'centro_costos_id');
     }
+    
     
 }

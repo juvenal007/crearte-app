@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Cliente extends Model
+class Solicitud extends Model
 {
     use HasFactory, SoftDeletes;
 
     //DEFINIMOS EL NOMBRE DE LA TABLA
-    protected $table = 'clientes';
+    protected $table = 'solicituds';
     //DEFINIMOS LA CLAVE PRIMARIA DE LA TABLA, AUTOMATICAMENTE SE LE ASIGNA AUTO INCREMENT
     protected $primaryKey = 'id';
 
@@ -20,21 +20,23 @@ class Cliente extends Model
 
     //ATRIBUTOS DE LA TABLE
     protected $fillable = [
-        'rut',
-        'nombre',
-        'apellido_paterno',
-        'apellido_materno',
-        'telefono',
-        'direccion',
-        'genero',
-        'clientes_id'
+        'solicitud_codigo',
+        'solicitud_nombre',
+        'solicitud_descripcion',
+        'solicitud_nombre_solicitante',
+        'solicitud_estados_id',
+        'solicitud_proyectos_id'
     ];
 
-    //RELACIÓN INVERSA HACIA CLIENTES
+    //RELACIÓN DIRECTA HACIA PROYECTOS
     public function proyectos()
     {
-        return $this->hasMany('App\Models\Proyecto', 'clientes_id');
+        return $this->belongsTo('App\Models\Proyecto', 'proyectos_id');
     }
 
-    
+    //RELACIÓN DIRECTA HACIA ESTADOS
+    public function estados()
+    {
+        return $this->belongsTo('App\Models\Estado', 'estados_id');
+    }
 }
