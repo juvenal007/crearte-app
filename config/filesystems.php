@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('FILESYSTEM_DRIVER', 'local'),
+    'default' => env('FILESYSTEM_DRIVER', 'public'),
 
     /*
     |--------------------------------------------------------------------------
@@ -46,13 +46,30 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),
+            'permissions' => [
+                'file' => [
+                    'public' => 0664,
+                    'private' => 0600,
+                ],
+                'dir' => [
+                    'public' => 0775,
+                    'private' => 0700,
+                ],
+            ],
         ],
 
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
             'url' => env('APP_URL').'/storage',
-            'visibility' => 'public',
+            'visibility' => 'public',      
+        ],
+
+        'solicitud' => [
+            'driver' => 'local',
+            'root' => storage_path('app/solicitudes'),
+            'url' => env('APP_URL').'/solicitudes',
+            'visibility' => 'public',      
         ],
 
         's3' => [
@@ -79,7 +96,8 @@ return [
     */
 
     'links' => [
-        public_path('storage') => storage_path('app/public'),
+        public_path('storage') => storage_path('app/public'), 
+        public_path('solicitudes') => storage_path('app/solicitudes'),        
     ],
 
 ];

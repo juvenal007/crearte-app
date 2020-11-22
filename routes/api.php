@@ -1,13 +1,16 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\CentroCostoController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\EstadoController;
+use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\ProyectoController;
-
+use App\Http\Controllers\SolicitudController;
+use App\Models\Solicitud;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,7 +32,11 @@ use Illuminate\Support\Facades\Route;
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
 
-Route::group(['middleware' => ['jwt.verify']], function() {
+
+
+Route::group(['middleware' => ['jwt.verify']], function () {  
+
+
 
     // ESTADOS
     Route::get('/estado/list', [EstadoController::class, 'list']);
@@ -50,8 +57,8 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::put('/proveedor/update/{id}', [ProveedorController::class, 'edit']);
     Route::delete('/proveedor/delete/{id}', [ProveedorController::class, 'delete']);
     Route::get('/proveedor/pluck', [ProveedorController::class, 'pluck']);
-    
-    
+
+
     // PROYECTOS
     Route::get('/proyecto/list/{centro_costo_id}', [ProyectoController::class, 'list']);
     Route::get('/proyecto/details/{id}', [ProyectoController::class, 'details']);
@@ -67,7 +74,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::get('/cliente/details/{id}', [ClienteController::class, 'details']);
     Route::get('/cliente/proyecto_details/{id}', [ClienteController::class, 'proyecto_details']);
     Route::post('/cliente/store/', [ClienteController::class, 'add']);
-    Route::put('/cliente/update/{id}', [ClienteController::class, 'edit']);    
+    Route::put('/cliente/update/{id}', [ClienteController::class, 'edit']);
     Route::delete('/cliente/delete/{id}', [ClienteController::class, 'delete']);
     Route::get('/cliente/pluck', [ClienteController::class, 'pluck']);
 
@@ -76,8 +83,24 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::get('/producto/details/{id}', [ProductoController::class, 'details']);
     Route::get('/producto/proyecto_details/{id}', [ProductoController::class, 'proyecto_details']);
     Route::post('/producto/store/', [ProductoController::class, 'add']);
-    Route::put('/producto/update/{id}', [ProductoController::class, 'edit']);    
+    Route::put('/producto/update/{id}', [ProductoController::class, 'edit']);
     Route::delete('/producto/delete/{id}', [ProductoController::class, 'delete']);
     Route::get('/producto/pluck', [ProductoController::class, 'pluck']);
+
+    // CATALOGOS
+    Route::get('/catalogo/list/', [CatalogoController::class, 'list']);
+    Route::get('/catalogo/details/{id}', [CatalogoController::class, 'details']);
+    Route::post('/catalogo/store/', [CatalogoController::class, 'add']);
+    Route::put('/catalogo/update/{id}', [CatalogoController::class, 'edit']);
+    Route::delete('/catalogo/delete/{id}', [CatalogoController::class, 'delete']);
+    Route::get('/catalogo/pluck', [CatalogoController::class, 'pluck']);
+
+    // SOLICITUD
+    Route::get('/solicitud/list/', [SolicitudController::class, 'list']);
+    Route::get('/solicitud/details/{id}', [SolicitudController::class, 'details']);
+    Route::post('/solicitud/store/', [SolicitudController::class, 'add']);
+    Route::put('/solicitud/update/{id}', [SolicitudController::class, 'edit']);
+    Route::delete('/solicitud/delete/{id}', [SolicitudController::class, 'delete']);
+    Route::get('/solicitud/pluck', [SolicitudController::class, 'pluck']);
     //SOME
 });

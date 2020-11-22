@@ -24,8 +24,9 @@ class Solicitud extends Model
         'solicitud_nombre',
         'solicitud_descripcion',
         'solicitud_nombre_solicitante',
-        'solicitud_estados_id',
-        'solicitud_proyectos_id'
+        'estados_id',
+        'proyectos_id',
+        'solicituds_id'
     ];
 
     //RELACIÓN DIRECTA HACIA PROYECTOS
@@ -39,4 +40,10 @@ class Solicitud extends Model
     {
         return $this->belongsTo('App\Models\Estado', 'estados_id');
     }
+
+      //RELACIÓN INVERSA HACIA SOLICITUD_CATALOGO
+      public function solicitud_catalogos()
+      {
+          return $this->hasMany('App\Models\SolicitudCatalogo', 'solicituds_id');
+      }
 }

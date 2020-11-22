@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -16,6 +17,7 @@ class DatabaseSeeder extends Seeder
         // ORDENAR SEEDER DE ACUERDO A LAS RELACIONES, ES DECIR
         // DESDE LOS MANTENEDORES HACIA LAS TABLAS RELACIONADAS
         $this->call([
+            CatalogoSeeder::class,
             UserSeeder::class,
             EstadoSeeder::class,
             CentroCostoSeeder::class,            
@@ -25,6 +27,7 @@ class DatabaseSeeder extends Seeder
             ProductoSeeder::class,       
             ProyectoSeeder::class,
             SolicitudSeeder::class,
+            SolicitudCatalogoSeeder::class
         ]);
     }
 }

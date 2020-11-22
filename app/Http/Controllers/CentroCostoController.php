@@ -40,7 +40,7 @@ class CentroCostoController extends Controller
     public function list()
     {
         $centro_costos = DB::table('centro_costos')->get();
-        return $this->ListResponse->JsonResponse($centro_costos);
+        return response()->json(['response' => ['status' => true, 'data' => $centro_costos, 'message' => 'Query success']], 200);
     }
 
     public function add(Request $request)
