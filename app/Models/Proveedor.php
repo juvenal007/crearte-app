@@ -38,4 +38,9 @@ class Proveedor extends Model
        {
            return $this->hasMany('App\Models\Producto', 'proveedors_id');
        }
+       //RELACIÓN INVERSA HACIA COTIZACION
+       public function cotizacions()
+       {
+           return $this->hasMany('App\Models\Cotizacion', 'proveedors_id');
+       }
 }

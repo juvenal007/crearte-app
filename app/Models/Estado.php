@@ -28,12 +28,18 @@ class Estado extends Model
     //RELACIÓN INVERSA HACIA CENTRO DE COSTOS
     public function proyectos()
     {
-        return $this->hasMany('App\Models\Proyecto', 'centro_costos_id');
+        return $this->hasMany('App\Models\Proyecto', 'estados_id');
     }
 
     //RELACION INVERSA HACIA SOLICITUDS
     public function solicituds()
     {
         return $this->hasMany('App\Models\Solicitud', 'estados_id');
+    }
+
+    //RELACION INVERSA HACIA SOLICITUDS
+    public function cotizacions()
+    {
+        return $this->hasMany('App\Models\Cotizacions', 'estados_id');
     }
 }

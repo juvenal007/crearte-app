@@ -46,4 +46,9 @@ class Solicitud extends Model
       {
           return $this->hasMany('App\Models\SolicitudCatalogo', 'solicituds_id');
       }
+      //RELACIÓN INVERSA HACIA COTIZACION
+      public function cotizacions()
+      {
+          return $this->hasMany('App\Models\Cotizacion', 'solicituds_id');
+      }
 }
