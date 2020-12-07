@@ -23,16 +23,16 @@ class ProveedorFactory extends Factory
     public function definition()
     {
         return [
-            'proveedor_rut' => Str::random(5),
-            'proveedor_nombre' => Str::random(5),
-            'proveedor_apellido_paterno' => Str::random(5),
-            'proveedor_apellido_materno' => Str::random(5),
-            'proveedor_direccion' => $this->faker->address,
-            'proveedor_telefono' => $this->faker->e164PhoneNumber,
-            'proveedor_razon_social' => $this->faker->text(15),
-            'proveedor_giro' => $this->faker->text(10),
-            'proveedor_ciudad' => $this->faker->text(8),
-            'proveedor_email' => $this->faker->text(13)
+            'proveedor_rut' => 'RUT-'.rand(1000, 4000),
+            'proveedor_nombre' => 'NOMBRE-'.rand(1000, 4000),
+            'proveedor_apellido_paterno' => 'APELLIDO PATERNO-'.rand(1000, 4000),
+            'proveedor_apellido_materno' => 'APELLIDO MATERNO-'.rand(1000, 4000),
+            'proveedor_direccion' => 'DIRECCIÓN-'.rand(1000, 4000),
+            'proveedor_telefono' => 'TELEFONO-'.rand(1000, 4000),
+            'proveedor_razon_social' => 'RAZÓN SOCIAL-'.rand(1000, 4000),
+            'proveedor_giro' => 'GIRO-'.rand(1000, 4000),
+            'proveedor_ciudad' => 'CIUDAD-'.rand(1000, 4000),
+            'proveedor_email' => 'E-MAIL-'.rand(1000, 4000),
             
         ];
     }

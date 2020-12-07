@@ -51,8 +51,12 @@ class CentroCostoController extends Controller
             if (!$validar->getData()->response->status) {
                 return json_encode($validar->getData());
             }
-            $centroCosto = $this->Create->createObject($request);
-            $centroCosto = $this->Repo->create($centroCosto);
+           /*  $centroCosto = $this->Create->createObject($request);
+            $centroCosto = $this->Repo->create($centroCosto); */
+            $centroCosto = new CentroCosto();
+            $centroCosto->nombre = strtoupper($request->data['nombre']);
+            $centroCosto->direccion = strtoupper($request->data['direccion']);
+            $centroCosto->save();
             return response()->json(['response' => ['status' => true, 'data' => $centroCosto, 'message' => 'Centro de Costos Creado']], 200);
         } catch (\Illuminate\Database\QueryException $e) {
             return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 500);
@@ -67,8 +71,8 @@ class CentroCostoController extends Controller
                 return json_encode($validar->getData());
             }
             $centroCosto = CentroCosto::find($id);
-            $centroCosto->nombre = $request->data['nombre'];
-            $centroCosto->direccion = $request->data['direccion'];
+            $centroCosto->nombre = strtoupper($request->data['nombre']);
+            $centroCosto->direccion = strtoupper($request->data['direccion']);
             $centroCosto->save();
 
             return response()->json(['response' => ['status' => true, 'data' => $centroCosto, 'message' => 'Centro de Costos Actualizado']], 200);

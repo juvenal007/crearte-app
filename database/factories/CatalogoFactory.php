@@ -22,9 +22,9 @@ class CatalogoFactory extends Factory
     public function definition()
     {
         return [
-            'catalogo_material' => $this->faker->text(10),
-            'catalogo_descripcion' => $this->faker->text(20),
-            'catalogo_unidad' => $this->faker->text(5),           
+            'catalogo_material' => 'MATERIAL-'.rand(1000, 4000),
+            'catalogo_descripcion' => 'DESCRIPCIÓN-'.rand(1000, 4000),
+            'catalogo_unidad' => 'UNIDAD-'.rand(1000, 4000),           
         ];
     }
 }

@@ -108,7 +108,7 @@ class SolicitudController extends Controller
             // GUARDAMOS EN LA BASE DE DATOS
             DB::commit();
 
-            return response()->json(['response' => ['status' => true, 'data' => ['solicitud' => $solicitud, 'pdf' => $url, 'carro' => $carro], 'message' => 'Proyecto Creado']], 200);
+            return response()->json(['response' => ['status' => true, 'data' => ['solicitud' => $solicitud, 'pdf' => $url, 'carro' => $carro], 'message' => 'Datos Creados']], 200);
         } catch (\Illuminate\Database\QueryException $e) {
             // SI FALLA VOLVEMOS AL ESTADO INICIAL
             DB::rollback();

@@ -22,8 +22,8 @@ class CentroCostoFactory extends Factory
     public function definition()
     {
         return [
-            'nombre' => $this->faker->name,
-            'direccion' => $this->faker->text(50)
+            'nombre' => 'CENTRO COSTO-'.rand(1000, 4000),
+            'direccion' => 'DIRECCIÓN-'.rand(1000, 4000),
         ];
     }
 }

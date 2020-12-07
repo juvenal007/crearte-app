@@ -22,9 +22,9 @@ class ProductoFactory extends Factory
     public function definition()
     {
         return [
-            'producto_material' => $this->faker->text(10),
-            'producto_descripcion' => $this->faker->text(20),
-            'producto_unidad' => $this->faker->text(5),
+            'producto_material' => 'MATERIAL-'.rand(1000, 4000),
+            'producto_descripcion' => 'DESCRIPCIÓN-'.rand(1000, 4000),
+            'producto_unidad' => 'UNIDAD-'.rand(1000, 4000),
             'proveedors_id' => $this->faker->numberBetween($min = 1, $max = 30)
         ];
     }

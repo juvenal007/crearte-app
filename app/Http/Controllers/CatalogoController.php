@@ -55,7 +55,10 @@ class CatalogoController extends Controller
                 return response()->json(['response' => ['type_error' => 'validation_error', 'status' => false, 'data' => $validar->errors(), 'message' => 'Validation errors']], 200);
             }
            
-            $catalogo = new Catalogo($request->data);
+            $catalogo = new Catalogo();
+            $catalogo->catalogo_material = strtoupper($request->data['catalogo_material']);
+            $catalogo->catalogo_descripcion = strtoupper($request->data['catalogo_descripcion']);
+            $catalogo->catalogo_unidad = strtoupper($request->data['catalogo_unidad']);  
             $catalogo->save();            
 
             return response()->json(['response' => ['status' => true, 'data' => $catalogo, 'message' => 'Producto Catalogo Creado']], 200);
@@ -77,9 +80,9 @@ class CatalogoController extends Controller
             }
 
             $catalogo = Catalogo::find($id);
-            $catalogo->catalogo_material = $request->data['catalogo_material'];
-            $catalogo->catalogo_descripcion = $request->data['catalogo_descripcion'];
-            $catalogo->catalogo_unidad = $request->data['catalogo_unidad'];      
+            $catalogo->catalogo_material = strtoupper($request->data['catalogo_material']);
+            $catalogo->catalogo_descripcion = strtoupper($request->data['catalogo_descripcion']);
+            $catalogo->catalogo_unidad = strtoupper($request->data['catalogo_unidad']);      
             $catalogo->save();
 
             //DEVELOP BRANCH

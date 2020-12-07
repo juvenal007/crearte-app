@@ -23,13 +23,13 @@ class ClienteFactory extends Factory
     public function definition()
     {
         return [
-            'rut' => Str::random(5),
-            'nombre' => Str::random(5),
-            'apellido_paterno' => Str::random(5),
-            'apellido_materno' => Str::random(5),
-            'telefono' => $this->faker->e164PhoneNumber,
-            'direccion' => $this->faker->address,
-            'genero' => 'Masculino',
+            'rut' => 'RUT-'.rand(1000, 4000),
+            'nombre' => 'NOMBRE-'.rand(1000, 4000),
+            'apellido_paterno' => 'APELLIDO PATERNO-'.rand(1000, 4000),
+            'apellido_materno' => 'APELLIDO MATERNO-'.rand(1000, 4000),
+            'telefono' => 'TELEFONO-'.rand(1000, 4000),
+            'direccion' => 'DIRECCIÓN-'.rand(1000, 4000),
+            'genero' => 'GÉNERO-'.rand(1000, 4000),
         ];
     }
 }

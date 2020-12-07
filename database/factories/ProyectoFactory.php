@@ -23,10 +23,10 @@ class ProyectoFactory extends Factory
     public function definition()
     {       
         return [
-            'nombre' => $this->faker->name,
-            'direccion' => $this->faker->address,
-            'descripcion' => $this->faker->text(50),
-            'telefono_ad' => $this->faker->e164PhoneNumber,
+            'nombre' => 'NOMBRE-PROYECTO-'.rand(1000, 4000),
+            'direccion' => 'DIRECCIÓN-'.rand(1000, 4000),
+            'descripcion' => 'DESCRIPCIÓN-'.rand(1000, 4000),
+            'telefono_ad' => 'TELEFONO-'.rand(1000, 4000),
             'centro_costos_id' => $this->faker->numberBetween($min = 1, $max= 50),
             'clientes_id' => $this->faker->numberBetween($min = 1, $max= 50)
         ];
