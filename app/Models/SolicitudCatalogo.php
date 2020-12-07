@@ -28,23 +28,23 @@ class SolicitudCatalogo extends Model
     //RELACIÓN DIRECTA HACIA CATALOGO
     public function catalogos()
     {
-        return $this->belongsTo('App\Models\Catalogo', 'catalogos_id');
+        return $this->belongsTo('App\Models\Catalogo');
     }
 
     //RELACIÓN DIRECTA HACIA SOLICITUD
     public function solicituds()
     {
-        return $this->belongsTo('App\Models\Solicitud', 'solicituds_id');
+        return $this->belongsTo('App\Models\Solicitud');
     }
 
     //RELACIÓN INVERSA HACIA SOLICITUD
     public function solicitud()
     {
-        return $this->hasMany('App\Models\Solicitud', 'solicituds_id');
+        return $this->hasMany('App\Models\Solicitud');
     }
      //RELACIÓN INVERSA HACIA CATALOGO
      public function catalogo()
      {
-         return $this->hasMany('App\Models\Catalogo', 'catalogos_id');
+         return $this->hasMany('App\Models\Catalogo');
      }
 }

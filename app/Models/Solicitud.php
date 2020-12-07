@@ -30,25 +30,25 @@ class Solicitud extends Model
     ];
 
     //RELACIÓN DIRECTA HACIA PROYECTOS
-    public function proyectos()
+    public function proyecto()
     {
-        return $this->belongsTo('App\Models\Proyecto', 'proyectos_id');
+        return $this->belongsTo('App\Models\Proyecto');
     }
 
     //RELACIÓN DIRECTA HACIA ESTADOS
     public function estados()
     {
-        return $this->belongsTo('App\Models\Estado', 'estados_id');
+        return $this->belongsTo('App\Models\Estado');
     }
 
       //RELACIÓN INVERSA HACIA SOLICITUD_CATALOGO
       public function solicitud_catalogos()
       {
-          return $this->hasMany('App\Models\SolicitudCatalogo', 'solicituds_id');
+          return $this->hasMany('App\Models\SolicitudCatalogo');
       }
       //RELACIÓN INVERSA HACIA COTIZACION
       public function cotizacions()
       {
-          return $this->hasMany('App\Models\Cotizacion', 'solicituds_id');
+          return $this->hasMany('App\Models\Cotizacion');
       }
 }

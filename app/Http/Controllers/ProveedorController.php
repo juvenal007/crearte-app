@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Producto;
 use App\Models\Proveedor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -27,7 +28,7 @@ class ProveedorController extends Controller
 
     public function list()
     {
-        $proveedor = DB::table('proveedors')->get();
+        $proveedor = Proveedor::all();
         return response()->json(['response' => ['status' => true, 'data' => $proveedor, 'message' => 'Query success']], 200);
     }
 
@@ -55,7 +56,7 @@ class ProveedorController extends Controller
             $proveedor->save();
             
 
-            return response()->json(['response' => ['status' => true, 'data' => $proveedor, 'message' => 'Proyecto Creado']], 200);
+            return response()->json(['response' => ['status' => true, 'data' => $proveedor, 'message' => 'Proveedor Creado']], 200);
         } catch (\Illuminate\Database\QueryException $e) {
             return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 500);
         }
@@ -65,30 +66,62 @@ class ProveedorController extends Controller
     {
         try {
             $validar = Validator::make($request->data, [
-                'nombre' => 'required|max:45|min:2|unique',
-                'direccion' => 'required|max:50|min:2',
-                'descripcion' => 'required|max:50|min:2',
-                'telefono_ad' => 'required|max:15|min:8',
-            ], ProyectoController::MESSAGES, ProyectoController::CUSTOM_ATTRIBUTES);
+                'proveedor_rut' => 'required|max:45|min:2',
+                'proveedor_nombre' => 'required|max:45|min:2',
+                'proveedor_apellido_paterno' => 'max:50|min:2',
+                'proveedor_apellido_materno' => 'max:50|min:2',
+                'proveedor_direccion' => 'required|max:50|min:2',
+                'proveedor_telefono' => 'required|max:50|min:2',
+                'proveedor_razon_social' => 'required|max:50|min:2',
+                'proveedor_giro' => 'required|max:50|min:2',
+                'proveedor_ciudad' => 'max:50|min:2',
+                'proveedor_email' => 'max:50|min:2',
+            ], ProveedorController::MESSAGES, ProveedorController::CUSTOM_ATTRIBUTES);
             if ($validar->fails()) {
                 return response()->json(['response' => ['type_error' => 'validation_error', 'status' => false, 'data' => $validar->errors(), 'message' => 'Validation errors']], 200);
             }
 
-            $proyecto = Proyecto::find($id);
-            $proyecto->nombre = $request->data['nombre'];
-            $proyecto->direccion = $request->data['direccion'];
-            $proyecto->descripcion = $request->data['descripcion'];
-            $proyecto->telefono_ad = $request->data['telefon_ad'];
-            $proyecto->save();
+            $proyecto = Proveedor::find($id);
+            $proyecto->proveedor_rut = $request->data['proveedor_rut'];
+            $proyecto->proveedor_nombre = $request->data['proveedor_nombre'];
+            $proyecto->proveedor_apellido_paterno = $request->data['proveedor_apellido_paterno'];
+            $proyecto->proveedor_apellido_materno = $request->data['proveedor_apellido_materno'];
+            $proyecto->proveedor_direccion = $request->data['proveedor_direccion'];
+            $proyecto->proveedor_telefono = $request->data['proveedor_telefono'];
+            $proyecto->proveedor_razon_social = $request->data['proveedor_razon_social'];
+            $proyecto->proveedor_giro = $request->data['proveedor_giro'];
+            $proyecto->proveedor_ciudad = $request->data['proveedor_ciudad'];
+            $proyecto->proveedor_email = $request->data['proveedor_email'];        
+            $proyecto->save();          
 
-            //DEVELOP BRANCH
 
-
-            return response()->json(['response' => ['status' => true, 'data' => $proyecto, 'message' => 'Proyecto Actualizado']], 200);
+            return response()->json(['response' => ['status' => true, 'data' => $proyecto, 'message' => 'Proveedor Actualizado']], 200);
         } catch (\Illuminate\Database\QueryException $error) {
             return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $error, 'message' => 'Error processing']], 500);
         }
     }
+    public function delete($id)
+    {
+        try {
+            $proveedor = Producto::where('proveedors_id', $id)->get();
+
+            if (!$proveedor) {
+                return response()->json(['response' => ['type_error' => 'entity_not_found', 'status' => false, 'data' => [], 'message' => 'Proveedor consultado no existe']], 400);
+            }
+
+            if ($proveedor->count() > 0) {
+                return response()->json(['response' => ['type_error' => 'not_allowed', 'status' => false, 'data' => [], 'message' => "No es posible eliminar el Proveedor " . $proveedor[0]['nombre'] . " ya que tiene Productos asociadas"]], 200);
+            }
+
+            $proveedor = Proveedor::where('id',$id);
+            $proveedor->delete();
+
+            return response()->json(['response' => ['status' => true, 'data' => $proveedor, 'message' => 'Proveedor Eliminado']], 200);
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 200);
+        }
+    }
+
 
   
 }

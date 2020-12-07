@@ -37,6 +37,13 @@ class SolicitudController extends Controller
         $solicituds = DB::table('solicituds')->get();
         return response()->json(['response' => ['status' => true, 'data' => $solicituds, 'message' => 'Query success']], 200);
     }
+    public function all()
+    {
+        $solicitudes = Solicitud::with('proyecto')
+            ->where('estados_id',1) //DEFINIMOS POR QUE VAMOS A BUSCAR
+            ->get();
+        return response()->json(['response' => ['status' => true, 'data' => $solicitudes, 'message' => 'Query success']], 200);
+    }
 
     public function generatePDF()
     {
@@ -106,6 +113,16 @@ class SolicitudController extends Controller
             // SI FALLA VOLVEMOS AL ESTADO INICIAL
             DB::rollback();
             return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 500);
+        }
+    }
+
+    public function details($id)
+    {
+        try {
+           $proyecto = Proyecto::with( 'clientes', 'centro_costos')->where('id', $id)->get();
+            return response()->json(['response' => ['status' => true, 'data' => $proyecto, 'message' => 'Proyecto Actualizado']], 200);
+        } catch (\Illuminate\Database\QueryException $error) {
+            return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $error, 'message' => 'Error processing']], 500);
         }
     }
 }

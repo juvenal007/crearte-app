@@ -97,10 +97,12 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     // SOLICITUD
     Route::get('/solicitud/list/', [SolicitudController::class, 'list']);
+    Route::get('/solicitud/list/all', [SolicitudController::class, 'all']);
     Route::get('/solicitud/details/{id}', [SolicitudController::class, 'details']);
     Route::post('/solicitud/store/', [SolicitudController::class, 'add']);
     Route::put('/solicitud/update/{id}', [SolicitudController::class, 'edit']);
     Route::delete('/solicitud/delete/{id}', [SolicitudController::class, 'delete']);
     Route::get('/solicitud/pluck', [SolicitudController::class, 'pluck']);
+    
     //SOME
 });

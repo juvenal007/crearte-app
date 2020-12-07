@@ -26,14 +26,13 @@ class Cliente extends Model
         'apellido_materno',
         'telefono',
         'direccion',
-        'genero',
-        'clientes_id'
+        'genero',        
     ];
 
     //RELACIÓN INVERSA HACIA CLIENTES
     public function proyectos()
     {
-        return $this->hasMany('App\Models\Proyecto', 'clientes_id');
+        return $this->hasMany('App\Models\Proyecto');
     }
 
     

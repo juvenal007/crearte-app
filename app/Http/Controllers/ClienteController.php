@@ -32,7 +32,7 @@ class ClienteController extends Controller
 
     public function list()
     {
-        $cliente = DB::table('clientes')->get();
+        $cliente = Cliente::all();
         return response()->json(['response' => ['status' => true, 'data' => $cliente, 'message' => 'Query success']], 200);
     }
 
@@ -42,6 +42,11 @@ class ClienteController extends Controller
             $validar = Validator::make($request->data, [
                 'rut' => 'required|max:45|min:2',
                 'nombre' => 'required|max:50|min:2',
+                'apellido_paterno' => 'required|max:100|min:2',
+                'apellido_materno' => 'required|max:100|min:2',
+                'telefono' => 'required|max:30|min:2',
+                'direccion' => 'required|max:100|min:2',
+                'genero' => 'required|max:15|min:2',
             ], ClienteController::MESSAGES, ClienteController::CUSTOM_ATTRIBUTES);
             if ($validar->fails()) {
                 return response()->json(['response' => ['type_error' => 'validation_error', 'status' => false, 'data' => $validar->errors(), 'message' => 'Validation errors']], 200);
@@ -50,7 +55,7 @@ class ClienteController extends Controller
             $cliente = new Cliente($request->data);
             $cliente->save();
 
-            return response()->json(['response' => ['status' => true, 'data' => $cliente, 'message' => 'Proyecto Creado']], 200);
+            return response()->json(['response' => ['status' => true, 'data' => $cliente, 'message' => 'Cliente Creado']], 200);
         } catch (\Illuminate\Database\QueryException $e) {
             return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 500);
         }
@@ -59,16 +64,29 @@ class ClienteController extends Controller
     public function edit(Request $request, $id)
     {
         try {
-            $validar = CentroCostoValidate::validateAdd($request);
-            if (!$validar->getData()->response->status) {
-                return json_encode($validar->getData());
+            $validar = Validator::make($request->data, [
+                'rut' => 'required|max:45|min:2',
+                'nombre' => 'required|max:50|min:2',
+                'apellido_paterno' => 'required|max:100|min:2',
+                'apellido_materno' => 'required|max:100|min:2',
+                'telefono' => 'required|max:30|min:2',
+                'direccion' => 'required|max:100|min:2',
+                'genero' => 'required|max:15|min:2',
+            ], ClienteController::MESSAGES, ClienteController::CUSTOM_ATTRIBUTES);
+            if ($validar->fails()) {
+                return response()->json(['response' => ['type_error' => 'validation_error', 'status' => false, 'data' => $validar->errors(), 'message' => 'Validation errors']], 200);
             }
-            $centroCosto = CentroCosto::find($id);
-            $centroCosto->nombre = $request->data['nombre'];
-            $centroCosto->direccion = $request->data['direccion'];
-            $centroCosto->save();
+            $cliente = Cliente::find($id);
+            $cliente->rut = $request->data['rut'];
+            $cliente->nombre = $request->data['nombre'];
+            $cliente->apellido_paterno = $request->data['apellido_paterno'];
+            $cliente->apellido_materno = $request->data['apellido_materno'];
+            $cliente->telefono = $request->data['telefono'];
+            $cliente->direccion = $request->data['direccion'];
+            $cliente->genero = $request->data['genero'];
+            $cliente->save();
 
-            return response()->json(['response' => ['status' => true, 'data' => $centroCosto, 'message' => 'Centro de Costos Actualizado']], 200);
+            return response()->json(['response' => ['status' => true, 'data' => $cliente, 'message' => 'Cliente Actualizado']], 200);
         } catch (\Illuminate\Database\QueryException $e) {
             return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 500);
         }
@@ -95,7 +113,7 @@ class ClienteController extends Controller
             /* $proyecto = Proyecto::with('cliente', 'centro_costos')
             ->where('clientes_id', $id)
             ->get(); */
-            $proyecto = Proyecto::with('cliente', 'centro_costos')
+            $proyecto = Proyecto::with('clientes', 'centro_costos')
             ->where('id', $id) //DEFINIMOS POR QUE VAMOS A BUSCAR
             ->get();
 
@@ -107,6 +125,28 @@ class ClienteController extends Controller
             return response()->json(['response' => ['status' => true, 'data' => $proyecto, 'message' => 'Query success']], 200);
         } catch (\Illuminate\Database\QueryException $e) {
             return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 500);
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            $cliente = Proyecto::where('clientes_id', $id)->get();
+
+            if (!$cliente) {
+                return response()->json(['response' => ['type_error' => 'entity_not_found', 'status' => false, 'data' => [], 'message' => 'Cliente consultado no existe']], 400);
+            }
+
+            if ($cliente->count() > 0) {
+                return response()->json(['response' => ['type_error' => 'not_allowed', 'status' => false, 'data' => [], 'message' => "No es posible eliminar el Cliente " . $cliente[0]['nombre'] . " ya que tiene Proyectos asociadas"]], 200);
+            }
+
+            $cliente = Cliente::where('id',$id);
+            $cliente->delete();
+
+            return response()->json(['response' => ['status' => true, 'data' => $cliente, 'message' => 'Cliente Eliminado']], 200);
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 200);
         }
     }
 }
