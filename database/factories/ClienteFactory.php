@@ -23,13 +23,16 @@ class ClienteFactory extends Factory
     public function definition()
     {
         return [
-            'rut' => 'RUT-'.rand(1000, 4000),
-            'nombre' => 'NOMBRE-'.rand(1000, 4000),
-            'apellido_paterno' => 'APELLIDO PATERNO-'.rand(1000, 4000),
-            'apellido_materno' => 'APELLIDO MATERNO-'.rand(1000, 4000),
-            'telefono' => 'TELEFONO-'.rand(1000, 4000),
-            'direccion' => 'DIRECCIÓN-'.rand(1000, 4000),
-            'genero' => 'GÉNERO-'.rand(1000, 4000),
+            'cliente_rut' => $this->faker->numerify($string = '#######'),
+            'cliente_dv' => $this->faker->numberBetween($min = 1, $max= 9),
+            'cliente_nombre' => 'NOMBRE-'.rand(1000, 4000),
+            'cliente_apellido_paterno' => 'APELLIDO PATERNO-'.rand(1000, 4000),
+            'cliente_apellido_materno' => 'APELLIDO MATERNO-'.rand(1000, 4000),
+            'cliente_telefono' => 'TELEFONO-'.rand(1000, 4000),
+            'cliente_direccion' => 'DIRECCIÓN-'.rand(1000, 4000),
+            'cliente_genero' => 'GÉNERO-'.rand(1000, 4000),
+            'cliente_proyecto_id' => $this->faker->numberBetween($min = 1, $max= 50),
+            'cliente_estado_id' => 10
         ];
     }
 }

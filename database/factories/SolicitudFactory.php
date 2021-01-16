@@ -21,13 +21,13 @@ class SolicitudFactory extends Factory
      */
     public function definition()
     {
-        return [
+       /*  return [
             'solicitud_codigo' => 'CODIGO-'.rand(1000, 4000),
             'solicitud_nombre' => 'NOMBRE-'.rand(1000, 4000),
             'solicitud_descripcion' => 'DESCRIPCIÓN-'.rand(1000, 4000),
             'solicitud_nombre_solicitante' => 'SOLICITANTE-'.rand(1000, 4000),
-            'estados_id' => 1,
-            'proyectos_id' => $this->faker->numberBetween($min = 1, $max= 50)
-        ];
+            'solicitud_estado_id' => 1,
+            'solicitud_proyecto_id' => $this->faker->numberBetween($min = 1, $max= 50)
+        ]; */
     }
 }

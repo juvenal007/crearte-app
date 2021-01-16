@@ -26,8 +26,8 @@ class CentroCostoController extends Controller
     ];
 
     const CUSTOM_ATTRIBUTES = [
-        'nombre' => 'Nombre',
-        'direccion' => 'Direccion'
+        'cc_nombre' => 'Nombre',
+        'cc_direccion' => 'Direccion'
     ];
 
     public function __construct(ListResponseInterface $ListResponse, CreateCentroCostoInterface $CreateCentroCosto, CentroCostoRepo $CentroCostoRepo, CentroCostoValidate $CentroCostoValidate)
@@ -54,8 +54,8 @@ class CentroCostoController extends Controller
            /*  $centroCosto = $this->Create->createObject($request);
             $centroCosto = $this->Repo->create($centroCosto); */
             $centroCosto = new CentroCosto();
-            $centroCosto->nombre = strtoupper($request->data['nombre']);
-            $centroCosto->direccion = strtoupper($request->data['direccion']);
+            $centroCosto->nombre = strtoupper($request->data['cc_nombre']);
+            $centroCosto->direccion = strtoupper($request->data['cc_direccion']);
             $centroCosto->save();
             return response()->json(['response' => ['status' => true, 'data' => $centroCosto, 'message' => 'Centro de Costos Creado']], 200);
         } catch (\Illuminate\Database\QueryException $e) {
@@ -71,8 +71,8 @@ class CentroCostoController extends Controller
                 return json_encode($validar->getData());
             }
             $centroCosto = CentroCosto::find($id);
-            $centroCosto->nombre = strtoupper($request->data['nombre']);
-            $centroCosto->direccion = strtoupper($request->data['direccion']);
+            $centroCosto->nombre = strtoupper($request->data['cc_nombre']);
+            $centroCosto->direccion = strtoupper($request->data['cc_direccion']);
             $centroCosto->save();
 
             return response()->json(['response' => ['status' => true, 'data' => $centroCosto, 'message' => 'Centro de Costos Actualizado']], 200);
@@ -90,7 +90,7 @@ class CentroCostoController extends Controller
     public function delete($id)
     {
         try {
-            $centro_costos = Proyecto::where('centro_costos_id', $id)->get();
+            $centro_costos = Proyecto::where('centro_costo_id', $id)->get();
 
             if (!$centro_costos) {
                 return response()->json(['response' => ['type_error' => 'entity_not_found', 'status' => false, 'data' => [], 'message' => 'Centro de Costo consultado no existe']], 400);

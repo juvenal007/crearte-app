@@ -15,9 +15,11 @@ class CreateSolicitudCatalogosTable extends Migration
     {
         Schema::create('solicitud_catalogos', function (Blueprint $table) {
             $table->id();
-            $table->string('solicitud_catalogo_cantidad', 50);            
-            $table->foreignId('solicituds_id')->constrained()->onDelete('cascade');
-            $table->foreignId('catalogos_id')->constrained()->onDelete('cascade');
+            $table->string('sc_cantidad', 50);
+            $table->unsignedBigInteger('sc_solicitud_id')->nullable();
+            $table->foreign('sc_solicitud_id')->references('id')->on('solicituds')->onDelete('set null');
+            $table->unsignedBigInteger('sc_catalogo_id')->nullable();
+            $table->foreign('sc_catalogo_id')->references('id')->on('catalogos')->onDelete('set null');
             $table->softDeletes('deleted_at', 0);
             $table->timestamps();
         });

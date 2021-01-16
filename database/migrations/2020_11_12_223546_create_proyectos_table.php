@@ -15,15 +15,17 @@ class CreateProyectosTable extends Migration
     {
         Schema::create('proyectos', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre', 100);
-            $table->string('direccion', 250);
-            $table->string('descripcion', 250);
-            $table->string('telefono_ad', 16);
+            $table->string('proyecto_nombre', 100);
+            $table->string('proyecto_direccion', 250);
+            $table->string('proyecto_descripcion', 250);
+            $table->string('proyecto_telefono_ad', 16)->nullable();;
+            $table->unsignedBigInteger('proyecto_centro_costo_id')->nullable();
+            $table->foreign('proyecto_centro_costo_id')->references('id')->on('centro_costos')->onDelete('set null');
+            $table->unsignedBigInteger('proyecto_estado_id')->nullable();
+            $table->foreign('proyecto_estado_id')->references('id')->on('estados')->onDelete('set null');
+            $table->softDeletes('deleted_at', 0);
             $table->timestamps();
-            $table->softDeletes('deleted_at', 0);      
-            $table->foreignId('centro_costos_id')->constrained()->onDelete('cascade');
-            $table->foreignId('clientes_id')->constrained()->onDelete('cascade');        
-            
+
         });
     }
 

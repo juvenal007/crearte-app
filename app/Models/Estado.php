@@ -16,30 +16,37 @@ class Estado extends Model
     protected $primaryKey = 'id';
 
     //CAMPOS QUE NO QUEREMOS QUE SE DEVUELVAN EN LAS CONSULTAS
-    protected $hidden = ['created_at','updated_at','deleted_at']; 
+    protected $hidden = ['created_at','updated_at','deleted_at'];
 
     //ATRIBUTOS DE LA TABLE
     protected $fillable = [
         'estado',
         'estado_descripcion',
-        'estados_id'
     ];
 
-    //RELACIÓN INVERSA HACIA CENTRO DE COSTOS
+    //RELACIÓN INVERSA HACIA PROYECTO
     public function proyectos()
     {
-        return $this->hasMany('App\Models\Proyecto', 'estados_id');
+        return $this->hasMany('App\Models\Proyecto');
+    }
+    public function clientes()
+    {
+        return $this->hasMany('App\Models\Cliente');
     }
 
     //RELACION INVERSA HACIA SOLICITUDS
     public function solicituds()
     {
-        return $this->hasMany('App\Models\Solicitud', 'estados_id');
+        return $this->hasMany('App\Models\Solicitud');
     }
 
     //RELACION INVERSA HACIA SOLICITUDS
     public function cotizacions()
     {
-        return $this->hasMany('App\Models\Cotizacions', 'estados_id');
+        return $this->hasMany('App\Models\Cotizacions');
     }
+ /*    public function orden_compra()
+    {
+        return $this->hasMany('App\Models\OrdenCompra');
+    } */
 }

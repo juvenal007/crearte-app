@@ -20,30 +20,30 @@ class SolicitudCatalogo extends Model
 
     //ATRIBUTOS DE LA TABLE
     protected $fillable = [
-        'solicitud_catalogo_cantidad',
-        'catalogos_id',
-        'solicituds_id'
+        'sc_cantidad',
+        'sc_catalogo_id',
+        'sc_solicitud_id'
     ];
 
     //RELACIÓN DIRECTA HACIA CATALOGO
-    public function catalogos()
+    public function catalogo()
     {
-        return $this->belongsTo('App\Models\Catalogo');
+        return $this->belongsTo('App\Models\Catalogo', 'sc_catalogo_id');
     }
 
     //RELACIÓN DIRECTA HACIA SOLICITUD
-    public function solicituds()
+    public function solicitud()
     {
-        return $this->belongsTo('App\Models\Solicitud');
+        return $this->belongsTo('App\Models\Solicitud', 'sc_solicitud_id');
     }
 
     //RELACIÓN INVERSA HACIA SOLICITUD
-    public function solicitud()
+    public function solicituds()
     {
         return $this->hasMany('App\Models\Solicitud');
     }
      //RELACIÓN INVERSA HACIA CATALOGO
-     public function catalogo()
+     public function catalogos()
      {
          return $this->hasMany('App\Models\Catalogo');
      }

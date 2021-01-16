@@ -2,17 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\CentroCosto;
+use App\Models\DetalleSolicitud;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class CentroCostoFactory extends Factory
+class DetalleSolicitudFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = CentroCosto::class;
+    protected $model = DetalleSolicitud::class;
 
     /**
      * Define the model's default state.
@@ -22,8 +22,7 @@ class CentroCostoFactory extends Factory
     public function definition()
     {
         return [
-            'cc_nombre' => 'CENTRO COSTO-'.rand(1000, 4000),
-            'cc_direccion' => 'DIRECCIÓN-'.rand(1000, 4000),
+            //
         ];
     }
 }

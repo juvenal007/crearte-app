@@ -15,10 +15,11 @@ class CreateProductosTable extends Migration
     {
         Schema::create('productos', function (Blueprint $table) {
             $table->id();
-            $table->string('producto_material', 50);
+            $table->string('producto_material', 100);
             $table->string('producto_descripcion', 200);
-            $table->string('producto_unidad', 50)->nullable(); 
-            $table->foreignId('proveedors_id')->constrained()->onDelete('cascade');
+            $table->string('producto_unidad', 50)->nullable();
+            $table->unsignedBigInteger('producto_proveedor_id')->nullable();
+            $table->foreign('producto_proveedor_id')->references('id')->on('proveedors')->onDelete('set null');
             $table->softDeletes('deleted_at', 0);
             $table->timestamps();
         });

@@ -16,24 +16,31 @@ class Cliente extends Model
     protected $primaryKey = 'id';
 
     //CAMPOS QUE NO QUEREMOS QUE SE DEVUELVAN EN LAS CONSULTAS
-    protected $hidden = ['created_at','updated_at','deleted_at']; 
+    protected $hidden = ['created_at','updated_at','deleted_at'];
 
     //ATRIBUTOS DE LA TABLE
     protected $fillable = [
-        'rut',
-        'nombre',
-        'apellido_paterno',
-        'apellido_materno',
-        'telefono',
-        'direccion',
-        'genero',        
+        'cliente_rut',
+        'cliente_dv',
+        'cliente_nombre',
+        'cliente_apellido_paterno',
+        'cliente_apellido_materno',
+        'cliente_telefono',
+        'cliente_direccion',
+        'cliente_genero',
+        'cliente_proyecto_id',
+        'cliente_estado_id'
     ];
 
-    //RELACIÓN INVERSA HACIA CLIENTES
-    public function proyectos()
+    //RELACIÓN  HACIA PROYECTOS Y ESTADOS
+    public function proyecto()
     {
-        return $this->hasMany('App\Models\Proyecto');
+        return $this->belongsTo('App\Models\Proyecto', 'cliente_proyecto_id');
+    }
+    public function estado()
+    {
+        return $this->belongsTo('App\Models\Estado', 'cliente_estado_id');
     }
 
-    
+
 }

@@ -16,28 +16,28 @@ class Proyecto extends Model
     protected $primaryKey = 'id';
 
     //CAMPOS QUE NO QUEREMOS QUE SE DEVUELVAN EN LAS CONSULTAS
-    protected $hidden = ['created_at','updated_at','deleted_at']; 
+    protected $hidden = ['created_at','updated_at','deleted_at'];
 
     //ATRIBUTOS DE LA TABLE
     protected $fillable = [
-        'nombre',
-        'direccion',
-        'descripcion',
-        'telefono_ad',       
-        'centro_costos_id',
-        'clientes_id'
+        'proyecto_nombre',
+        'proyecto_direccion',
+        'proyecto_descripcion',
+        'proyecto_telefono_ad',
+        'proyecto_centro_costo_id',
+        'proyecto_cliente_id'
     ];
 
     //RELACIÓN DIRECTA HACIA CENTRO DE COSTOS
-    public function centro_costos()
+    public function centro_costo()
     {
-        return $this->belongsTo('App\Models\CentroCosto');
+        return $this->belongsTo('App\Models\CentroCosto', 'proyecto_centro_costo_id');
     }
 
     //RELACIÓN DIRECTA HACIA CLIENTE
-    public function clientes()
+    public function cliente()
     {
-        return $this->belongsTo('App\Models\Cliente');
+        return $this->belongsTo('App\Models\Cliente', 'proyecto_cliente_id');
     }
 
     //RELACIÓN INVERSA HACIA SOLICITUD

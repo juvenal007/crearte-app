@@ -16,7 +16,7 @@ class Proveedor extends Model
     protected $primaryKey = 'id';
 
     //CAMPOS QUE NO QUEREMOS QUE SE DEVUELVAN EN LAS CONSULTAS
-    protected $hidden = ['created_at','updated_at','deleted_at']; 
+    protected $hidden = ['created_at','updated_at','deleted_at'];
 
     //ATRIBUTOS DE LA TABLE
     protected $fillable = [
@@ -29,18 +29,18 @@ class Proveedor extends Model
         'proveedor_razon_social',
         'proveedor_giro',
         'proveedor_ciudad',
-        'proveedor_email',   
-        'proveedors_id' ,       
+        'proveedor_email',
+
     ];
 
        //RELACIÓN INVERSA HACIA SOLICITUD
        public function productos()
        {
-           return $this->hasMany('App\Models\Producto', 'proveedors_id');
+           return $this->hasMany('App\Models\Producto');
        }
        //RELACIÓN INVERSA HACIA COTIZACION
        public function cotizacions()
        {
-           return $this->hasMany('App\Models\Cotizacion', 'proveedors_id');
+           return $this->hasMany('App\Models\Cotizacion');
        }
 }

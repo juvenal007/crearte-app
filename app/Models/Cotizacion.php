@@ -26,25 +26,25 @@ class Cotizacion extends Model
         'cotizacion_total',
         'cotizacion_fecha_emision',
         'cotizacion_fehca_vigencia',
-        'solicituds_id',
-        'proveedors_id',
-        'estados_id',
+        'cotizacion_solicitud_id',
+        'cotizacion_proveedor_id',
+        'cotizacion_estado_id',
     ];
 
     //RELACIÓN DIRECTA HACIA SOLICITUD
-    public function solicituds()
+    public function solicitud()
     {
-        return $this->belongsTo('App\Models\Solicitud', 'solicituds_id');
+        return $this->belongsTo('App\Models\Solicitud', 'cotizacion_solicitud_id');
     }
 
     //RELACIÓN DIRECTA HACIA PROVEEDOR
-    public function proveedors()
+    public function proveedor()
     {
-        return $this->belongsTo('App\Models\Proveedor', 'proveedors_id');
+        return $this->belongsTo('App\Models\Proveedor', 'cotizacion_proveedor_id');
     }
     //RELACIÓN DIRECTA HACIA ESTADO
-    public function estados()
+    public function estado()
     {
-        return $this->belongsTo('App\Models\Estado', 'estados_id');
+        return $this->belongsTo('App\Models\Estado', 'cotizacion_estado_id');
     }
 }

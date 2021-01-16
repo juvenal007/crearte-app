@@ -20,13 +20,13 @@ class DatabaseSeeder extends Seeder
             CatalogoSeeder::class,
             UserSeeder::class,
             EstadoSeeder::class,
-            CentroCostoSeeder::class,            
+            CentroCostoSeeder::class,
             EstadoSeeder::class,
-            ClienteSeeder::class,   
-            ProveedorSeeder::class,  
-            ProductoSeeder::class,       
+            ProveedorSeeder::class,
+            ProductoSeeder::class,
             ProyectoSeeder::class,
-            SolicitudSeeder::class,
+            ClienteSeeder::class,
+            /* SolicitudSeeder::class, */
             SolicitudCatalogoSeeder::class
         ]);
     }

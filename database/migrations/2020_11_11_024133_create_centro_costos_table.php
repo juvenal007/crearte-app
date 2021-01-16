@@ -15,8 +15,8 @@ class CreateCentroCostosTable extends Migration
     {
         Schema::create('centro_costos', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre', 100);
-            $table->string('direccion', 250);
+            $table->string('cc_nombre', 100);
+            $table->string('cc_direccion', 250);
             $table->timestamps();
             $table->softDeletes('deleted_at', 0);
         });

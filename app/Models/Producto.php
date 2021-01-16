@@ -16,20 +16,20 @@ class Producto extends Model
     protected $primaryKey = 'id';
 
     //CAMPOS QUE NO QUEREMOS QUE SE DEVUELVAN EN LAS CONSULTAS
-    protected $hidden = ['created_at','updated_at','deleted_at']; 
+    protected $hidden = ['created_at','updated_at','deleted_at'];
 
     //ATRIBUTOS DE LA TABLE
     protected $fillable = [
         'producto_material',
         'producto_descripcion',
         'producto_unidad',
-        'proveedors_id'        
+        'producto_proveedor_id'
     ];
 
-        //RELACIÓN DIRECTA HACIA CLIENTE
-        public function proveedors()
+        //RELACIÓN DIRECTA HACIA PROVEEDOR
+        public function proveedor()
         {
-            return $this->belongsTo('App\Models\Proveedor', 'proveedors_id');
+            return $this->belongsTo('App\Models\Proveedor', 'producto_proveedor_id');
         }
 
 

@@ -16,7 +16,7 @@ class Solicitud extends Model
     protected $primaryKey = 'id';
 
     //CAMPOS QUE NO QUEREMOS QUE SE DEVUELVAN EN LAS CONSULTAS
-    protected $hidden = ['created_at','updated_at','deleted_at']; 
+    protected $hidden = ['created_at','updated_at','deleted_at'];
 
     //ATRIBUTOS DE LA TABLE
     protected $fillable = [
@@ -24,21 +24,21 @@ class Solicitud extends Model
         'solicitud_nombre',
         'solicitud_descripcion',
         'solicitud_nombre_solicitante',
-        'estados_id',
-        'proyectos_id',
-        'solicituds_id'
+        'solicitud_estado_id',
+        'solicitud_proyecto_id',
+        'solicitud_solicitud_id'
     ];
 
     //RELACIÓN DIRECTA HACIA PROYECTOS
     public function proyecto()
     {
-        return $this->belongsTo('App\Models\Proyecto');
+        return $this->belongsTo('App\Models\Proyecto', 'solicitud_proyecto_id');
     }
 
     //RELACIÓN DIRECTA HACIA ESTADOS
-    public function estados()
+    public function estado()
     {
-        return $this->belongsTo('App\Models\Estado');
+        return $this->belongsTo('App\Models\Estado', 'solicitud_estado_id');
     }
 
       //RELACIÓN INVERSA HACIA SOLICITUD_CATALOGO

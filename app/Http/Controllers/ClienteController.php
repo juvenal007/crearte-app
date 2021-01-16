@@ -21,13 +21,13 @@ class ClienteController extends Controller
     ];
 
     const CUSTOM_ATTRIBUTES = [
-        'rut' => 'Rut',
-        'nombre' => 'Nombre',
-        'apellido_paterno' => 'Apellido Paterno',
-        'apellido_materno' => 'Apellido Materno',
-        'telefono' => 'Telefono',
-        'direccion' => 'Dirección',
-        'genero' => 'Genero',
+        'cliente_rut' => 'Rut',
+        'cliente_nombre' => 'Nombre',
+        'cliente_apellido_paterno' => 'Apellido Paterno',
+        'cliente_apellido_materno' => 'Apellido Materno',
+        'cliente_telefono' => 'Telefono',
+        'cliente_direccion' => 'Dirección',
+        'cliente_genero' => 'Genero',
     ];
 
     public function list()
@@ -40,13 +40,13 @@ class ClienteController extends Controller
     {
         try {
             $validar = Validator::make($request->data, [
-                'rut' => 'required|max:45|min:2',
-                'nombre' => 'required|max:50|min:2',
-                'apellido_paterno' => 'required|max:100|min:2',
-                'apellido_materno' => 'required|max:100|min:2',
-                'telefono' => 'required|max:30|min:2',
-                'direccion' => 'required|max:100|min:2',
-                'genero' => 'required|max:15|min:2',
+                'cliente_rut' => 'required|max:45|min:2',
+                'cliente_nombre' => 'required|max:50|min:2',
+                'cliente_apellido_paterno' => 'required|max:100|min:2',
+                'cliente_apellido_materno' => 'required|max:100|min:2',
+                'cliente_telefono' => 'required|max:30|min:2',
+                'cliente_direccion' => 'required|max:100|min:2',
+                'cliente_genero' => 'required|max:15|min:2',
             ], ClienteController::MESSAGES, ClienteController::CUSTOM_ATTRIBUTES);
             if ($validar->fails()) {
                 return response()->json(['response' => ['type_error' => 'validation_error', 'status' => false, 'data' => $validar->errors(), 'message' => 'Validation errors']], 200);
@@ -65,25 +65,25 @@ class ClienteController extends Controller
     {
         try {
             $validar = Validator::make($request->data, [
-                'rut' => 'required|max:45|min:2',
-                'nombre' => 'required|max:50|min:2',
-                'apellido_paterno' => 'required|max:100|min:2',
-                'apellido_materno' => 'required|max:100|min:2',
-                'telefono' => 'required|max:30|min:2',
-                'direccion' => 'required|max:100|min:2',
-                'genero' => 'required|max:15|min:2',
+                'cliente_rut' => 'required|max:45|min:2',
+                'cliente_nombre' => 'required|max:50|min:2',
+                'cliente_apellido_paterno' => 'required|max:100|min:2',
+                'cliente_apellido_materno' => 'required|max:100|min:2',
+                'cliente_telefono' => 'required|max:30|min:2',
+                'cliente_direccion' => 'required|max:100|min:2',
+                'cliente_genero' => 'required|max:15|min:2',
             ], ClienteController::MESSAGES, ClienteController::CUSTOM_ATTRIBUTES);
             if ($validar->fails()) {
                 return response()->json(['response' => ['type_error' => 'validation_error', 'status' => false, 'data' => $validar->errors(), 'message' => 'Validation errors']], 200);
             }
             $cliente = Cliente::find($id);
-            $cliente->rut = $request->data['rut'];
-            $cliente->nombre = $request->data['nombre'];
-            $cliente->apellido_paterno = $request->data['apellido_paterno'];
-            $cliente->apellido_materno = $request->data['apellido_materno'];
-            $cliente->telefono = $request->data['telefono'];
-            $cliente->direccion = $request->data['direccion'];
-            $cliente->genero = $request->data['genero'];
+            $cliente->rut = $request->data['cliente_rut'];
+            $cliente->nombre = $request->data['cliente_nombre'];
+            $cliente->apellido_paterno = $request->data['cliente_apellido_paterno'];
+            $cliente->apellido_materno = $request->data['cliente_apellido_materno'];
+            $cliente->telefono = $request->data['cliente_telefono'];
+            $cliente->direccion = $request->data['cliente_direccion'];
+            $cliente->genero = $request->data['cliente_genero'];
             $cliente->save();
 
             return response()->json(['response' => ['status' => true, 'data' => $cliente, 'message' => 'Cliente Actualizado']], 200);
@@ -113,7 +113,7 @@ class ClienteController extends Controller
             /* $proyecto = Proyecto::with('cliente', 'centro_costos')
             ->where('clientes_id', $id)
             ->get(); */
-            $proyecto = Proyecto::with('clientes', 'centro_costos')
+            $proyecto = Proyecto::with('proyecto_cliente', 'proyecto_centro_costo')
             ->where('id', $id) //DEFINIMOS POR QUE VAMOS A BUSCAR
             ->get();
 
@@ -131,7 +131,7 @@ class ClienteController extends Controller
     public function delete($id)
     {
         try {
-            $cliente = Proyecto::where('clientes_id', $id)->get();
+            $cliente = Proyecto::where('proyecto_cliente_id', $id)->get();
 
             if (!$cliente) {
                 return response()->json(['response' => ['type_error' => 'entity_not_found', 'status' => false, 'data' => [], 'message' => 'Cliente consultado no existe']], 400);

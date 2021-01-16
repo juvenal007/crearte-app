@@ -43,6 +43,22 @@ class EstadoSeeder extends Seeder
                 'estado' => 'TERMINADA',
                 'estado_descripcion' => 'TERMINADA'
             ],
+            [
+                'estado' => 'PROYECTO_ACTIVO',
+                'estado_descripcion' => 'TERMINADA'
+            ],
+            [
+                'estado' => 'PROYECTO_TERMINADO',
+                'estado_descripcion' => 'TERMINADA'
+            ],
+            [
+                'estado' => 'CLIENTE_ACTIVO',
+                'estado_descripcion' => 'TERMINADA'
+            ],
+            [
+                'estado' => 'CLIENTE_TERMINADO',
+                'estado_descripcion' => 'TERMINADA'
+            ],
         ]
         );
     }

@@ -21,14 +21,14 @@ class ProyectoFactory extends Factory
      * @return array
      */
     public function definition()
-    {       
+    {
         return [
-            'nombre' => 'NOMBRE-PROYECTO-'.rand(1000, 4000),
-            'direccion' => 'DIRECCIÓN-'.rand(1000, 4000),
-            'descripcion' => 'DESCRIPCIÓN-'.rand(1000, 4000),
-            'telefono_ad' => 'TELEFONO-'.rand(1000, 4000),
-            'centro_costos_id' => $this->faker->numberBetween($min = 1, $max= 50),
-            'clientes_id' => $this->faker->numberBetween($min = 1, $max= 50)
+            'proyecto_nombre' => 'NOMBRE-PROYECTO-'.rand(1000, 4000),
+            'proyecto_direccion' => 'DIRECCIÓN-'.rand(1000, 4000),
+            'proyecto_descripcion' => 'DESCRIPCIÓN-'.rand(1000, 4000),
+            'proyecto_telefono_ad' => 'TELEFONO-'.rand(1000, 4000),
+            'proyecto_centro_costo_id' => $this->faker->numberBetween($min = 1, $max= 50),
+            'proyecto_estado_id' => 8
         ];
     }
 }
