@@ -41,6 +41,10 @@ class Cliente extends Model
     {
         return $this->belongsTo('App\Models\Estado', 'cliente_estado_id');
     }
+    public function detalle_solicituds()
+    {
+        return $this->hasMany('App\Models\DetalleSolicitud');
+    }
 
 
 }

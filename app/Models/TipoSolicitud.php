@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Catalogo extends Model
+class TipoSolicitud extends Model
 {
     use HasFactory, SoftDeletes;
 
     //DEFINIMOS EL NOMBRE DE LA TABLA
-    protected $table = 'catalogos';
+    protected $table = 'tipo_solicituds';
     //DEFINIMOS LA CLAVE PRIMARIA DE LA TABLA, AUTOMATICAMENTE SE LE ASIGNA AUTO INCREMENT
     protected $primaryKey = 'id';
 
@@ -20,21 +20,15 @@ class Catalogo extends Model
 
     //ATRIBUTOS DE LA TABLE
     protected $fillable = [
-        'catalogo_material',
-        'catalogo_descripcion',
-        'catalogo_unidad_id'
+        'ts_nombre',
+        'ts_descripcion'
     ];
 
-        //RELACIÓN INVERSA HACIA CATALOGO
-        public function catalogos()
-        {
-            return $this->hasMany('App\Models\SolicitudCatalogo');
-        }
-        public function unidad()
-        {
-            return $this->belongsTo('App\Models\Unidad', 'catalogo_unidad_id');
-        }
 
-
+      //RELACIÓN INVERSA HACIA SOLICITUD_CATALOGO
+      public function solicituds()
+      {
+          return $this->hasMany('App\Models\Solicitud');
+      }
 
 }

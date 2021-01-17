@@ -20,8 +20,9 @@ class DetalleSolicitud extends Model
 
     //ATRIBUTOS DE LA TABLE
     protected $fillable = [
+        'ds_centro_costo_id',
         'ds_proyecto_id',
-        'dc_cliente_id'
+        'ds_cliente_id'
     ];
 
     //RELACIÓN DIRECTA HACIA PROYECTO
@@ -33,7 +34,12 @@ class DetalleSolicitud extends Model
     //RELACIÓN DIRECTA HACIA CLIENTE
     public function cliente()
     {
-        return $this->belongsTo('App\Models\Cliente', 'dc_cliente_id');
+        return $this->belongsTo('App\Models\Cliente', 'ds_cliente_id');
+    }
+    //RELACIÓN DIRECTA HACIA CENTRO COSTO
+    public function centro_costo()
+    {
+        return $this->belongsTo('App\Models\CentroCosto', 'ds_centro_costo_id');
     }
 
 }

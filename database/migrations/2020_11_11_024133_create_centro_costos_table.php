@@ -17,6 +17,8 @@ class CreateCentroCostosTable extends Migration
             $table->id();
             $table->string('cc_nombre', 100);
             $table->string('cc_direccion', 250);
+            $table->unsignedBigInteger('cc_estado_id')->nullable();
+            $table->foreign('cc_estado_id')->references('id')->on('estados')->onDelete('set null');
             $table->timestamps();
             $table->softDeletes('deleted_at', 0);
         });

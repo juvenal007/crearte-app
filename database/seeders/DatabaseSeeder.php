@@ -17,17 +17,20 @@ class DatabaseSeeder extends Seeder
         // ORDENAR SEEDER DE ACUERDO A LAS RELACIONES, ES DECIR
         // DESDE LOS MANTENEDORES HACIA LAS TABLAS RELACIONADAS
         $this->call([
+            UnidadSeeder::class,
+            ProveedorSeeder::class,
             CatalogoSeeder::class,
             UserSeeder::class,
             EstadoSeeder::class,
-            CentroCostoSeeder::class,
+            /* CentroCostoSeeder::class, */
             EstadoSeeder::class,
-            ProveedorSeeder::class,
             ProductoSeeder::class,
-            ProyectoSeeder::class,
-            ClienteSeeder::class,
+            /* ProyectoSeeder::class, */
+            /* ClienteSeeder::class, */
+            TipoSolicitudSeeder::class,
+
             /* SolicitudSeeder::class, */
-            SolicitudCatalogoSeeder::class
+            /* SolicitudCatalogoSeeder::class */
         ]);
     }
 }

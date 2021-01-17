@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Estado;
 use App\Models\Solicitud;
 use App\Models\SolicitudCatalogo;
+use Faker\Documentor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -37,13 +39,13 @@ class SolicitudController extends Controller
         $solicituds = DB::table('solicituds')->get();
         return response()->json(['response' => ['status' => true, 'data' => $solicituds, 'message' => 'Query success']], 200);
     }
-    public function all()
+  /*   public function all()
     {
-        $solicitudes = Solicitud::with('proyecto')
+        $solicitudes = Solicitud::with('proyectos')
             ->where('estados_id',1) //DEFINIMOS POR QUE VAMOS A BUSCAR
             ->get();
         return response()->json(['response' => ['status' => true, 'data' => $solicitudes, 'message' => 'Query success']], 200);
-    }
+    } */
 
     public function generatePDF()
     {
@@ -56,7 +58,7 @@ class SolicitudController extends Controller
         $filename = uniqid('solicitud-', true) . '.';
         $nombre = date("Y-m-d-H-i-s");
         $final_name = "Solicitud-{$nombre}.pdf";
-               
+
         Storage::disk('solicitud')->put($final_name, $pdf->output());
         $url = "http://localhost:8000/solicitudes/".$final_name;
         return $url;
@@ -66,21 +68,29 @@ class SolicitudController extends Controller
     {
         try {
             /*  $validar = Validator::make($request->data, [
-                'solicitud_catalogo_cantidad' => 'required|max:45|min:2',  
+                'solicitud_catalogo_cantidad' => 'required|max:45|min:2',
             ], SolicitudController::MESSAGES, SolicitudController::CUSTOM_ATTRIBUTES);
             if ($validar->fails()) {
                 return response()->json(['response' => ['type_error' => 'validation_error', 'status' => false, 'data' => $validar->errors(), 'message' => 'Validation errors']], 200);
             } */
 
-            $solicitud = $request->data;
-            $datos = [
-                'solicitud_codigo' => Str::random(3) . "-" . Str::random(7),
-                'solicitud_nombre' => Str::random(10),
-                'solicitud_descripcion' => Str::random(50),
-                'solicitud_nombre_solicitante' => $request->data['solicitud_nombre_solicitante'],
-                'estados_id' => 1,
-                'proyectos_id' => $request->data['proyecto']['id'],
-            ];
+            $ultimoId = Solicitud::all()->count();
+            $estado = Estado::where('estado', 'SOLICITUD_ACTIVA');
+
+            if($ultimoId == 0)
+            {
+                $datos = [
+                    'solicitud_codigo' => crc32(1),
+                    'solicitud_nombre' => $request->data['solicitud_nombre'],
+                    'solicitud_descripcion' => $request->data['solicitud_descripcion'],
+                    'solicitud_nombre_solicitante' => $request->data['solicitud_nombre_solicitante'],
+                    'solicitud_estado_id' => $estado->id,
+                    'solicitud_detalle_solicitud_id' => $request->data['proyecto']['id'],
+                ];
+            }
+
+          /*   $solicitud = $request->data;
+
             // INDICAMOS A MYSQL EL TIPO DE TRANSACCIÓN YA QUE SERÁN SIMULTANEAS
             DB::beginTransaction();
 
@@ -99,19 +109,19 @@ class SolicitudController extends Controller
                 $solicitud_catalogo->save();
             }
 
-              $url = $this->generatePDF();
+              $url = $this->generatePDF(); */
 
-           
+
 
 
 
             // GUARDAMOS EN LA BASE DE DATOS
-            DB::commit();
+        /*     DB::commit(); */
 
-            return response()->json(['response' => ['status' => true, 'data' => ['solicitud' => $solicitud, 'pdf' => $url, 'carro' => $carro], 'message' => 'Datos Creados']], 200);
+            return response()->json(['response' => ['status' => true, 'data' => ['solicitud' => $ultimoId, 'pdf' => $ultimoId, 'carro' => $ultimoId], 'message' => 'Datos Creados']], 200);
         } catch (\Illuminate\Database\QueryException $e) {
             // SI FALLA VOLVEMOS AL ESTADO INICIAL
-            DB::rollback();
+          /*   DB::rollback(); */
             return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 500);
         }
     }

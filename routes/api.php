@@ -10,6 +10,8 @@ use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\ProyectoController;
 use App\Http\Controllers\SolicitudController;
+use App\Http\Controllers\TipoSolicitudController;
+use App\Http\Controllers\UnidadController;
 use App\Models\Solicitud;
 use Illuminate\Support\Facades\Route;
 
@@ -31,10 +33,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('login', [AuthController::class, 'login']);
 Route::post('register', [AuthController::class, 'register']);
+Route::post('logout', [AuthController::class, 'logout']);
 
 
-
-Route::group(['middleware' => ['jwt.verify']], function () {  
+Route::group(['middleware' => ['jwt.verify']], function () {
 
 
 
@@ -43,6 +45,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     // CENTRO DE COSTOS
     Route::get('/centro-costo/list', [CentroCostoController::class, 'list']);
+    Route::get('/centro-costo/list_activo', [CentroCostoController::class, 'list_activo']);
     Route::get('/centro-costo/details/{id}', [CentroCostoController::class, 'details']);
     Route::post('/centro-costo/store', [CentroCostoController::class, 'add']);
     Route::put('/centro-costo/update/{id}', [CentroCostoController::class, 'edit']);
@@ -61,8 +64,9 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     // PROYECTOS
     Route::get('/proyecto/list/{centro_costo_id}', [ProyectoController::class, 'list']);
+    Route::get('/proyecto/list_activo/', [ProyectoController::class, 'list_activo']);
     Route::get('/proyecto/details/{id}', [ProyectoController::class, 'details']);
-    Route::post('/proyecto/store/', [ProyectoController::class, 'add']);
+    Route::post('/proyecto/store/{centro_costo_id}', [ProyectoController::class, 'add']);
     Route::put('/proyecto/update/{id}', [ProyectoController::class, 'edit']);
     Route::delete('/proyecto/delete/{id}', [ProyectoController::class, 'delete']);
     Route::get('/proyecto/pluck', [ProyectoController::class, 'pluck']);
@@ -71,6 +75,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     // CLIENTES
     Route::get('/cliente/list/', [ClienteController::class, 'list']);
+    Route::get('/cliente/list_activo/', [ClienteController::class, 'list_activo']);
+    Route::get('/cliente/list_cliente_proyecto/{cliente_proyecto}', [ClienteController::class, 'list_cliente_proyecto']);
     Route::get('/cliente/details/{id}', [ClienteController::class, 'details']);
     Route::get('/cliente/proyecto_details/{id}', [ClienteController::class, 'proyecto_details']);
     Route::post('/cliente/store/', [ClienteController::class, 'add']);
@@ -103,6 +109,24 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::put('/solicitud/update/{id}', [SolicitudController::class, 'edit']);
     Route::delete('/solicitud/delete/{id}', [SolicitudController::class, 'delete']);
     Route::get('/solicitud/pluck', [SolicitudController::class, 'pluck']);
-    
+
+    // TIPO SOLICITUD
+    Route::get('/tipo-solicitud/list/', [TipoSolicitudController::class, 'list']);
+    Route::get('/tipo-solicitud/list/all', [TipoSolicitudController::class, 'all']);
+    Route::get('/tipo-solicitud/details/{id}', [TipoSolicitudController::class, 'details']);
+    Route::post('/tipo-solicitud/store/', [TipoSolicitudController::class, 'add']);
+    Route::put('/tipo-solicitud/update/{id}', [TipoSolicitudController::class, 'edit']);
+    Route::delete('/tipo-solicitud/delete/{id}', [TipoSolicitudController::class, 'delete']);
+    Route::get('/tipo-solicitud/pluck', [TipoSolicitudController::class, 'pluck']);
+
+    // UNIDAD
+    Route::get('/unidad/list/', [UnidadController::class, 'list']);
+    Route::get('/unidad/list/all', [UnidadController::class, 'all']);
+    Route::get('/unidad/details/{id}', [UnidadController::class, 'details']);
+    Route::post('/unidad/store/', [UnidadController::class, 'add']);
+    Route::put('/unidad/update/{id}', [UnidadController::class, 'edit']);
+    Route::delete('/unidad/delete/{id}', [UnidadController::class, 'delete']);
+    Route::get('/unidad/pluck', [UnidadController::class, 'pluck']);
+
     //SOME
 });

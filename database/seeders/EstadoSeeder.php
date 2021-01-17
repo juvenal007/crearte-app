@@ -59,6 +59,14 @@ class EstadoSeeder extends Seeder
                 'estado' => 'CLIENTE_TERMINADO',
                 'estado_descripcion' => 'TERMINADA'
             ],
+            [
+                'estado' => 'CENTRO_COSTO_ACTIVO',
+                'estado_descripcion' => 'TERMINADA'
+            ],
+            [
+                'estado' => 'CENTRO_COSTO_TERMINADO',
+                'estado_descripcion' => 'TERMINADA'
+            ],
         ]
         );
     }

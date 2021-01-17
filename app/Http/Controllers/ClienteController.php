@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cliente;
+use App\Models\DetalleSolicitud;
+use App\Models\Estado;
 use App\Models\Proyecto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -35,6 +37,26 @@ class ClienteController extends Controller
         $cliente = Cliente::all();
         return response()->json(['response' => ['status' => true, 'data' => $cliente, 'message' => 'Query success']], 200);
     }
+    public function list_activo()
+    {
+        try {
+            $estado = Estado::where('estado', 'CLIENTE_ACTIVO')->first();
+            $cliente = Cliente::with('proyecto', 'proyecto.centro_costo')->where('cliente_estado_id', $estado->id)->get();
+            if ($cliente->count() <= 0) {
+                return response()->json(['response' => ['type_error' => 'not_allowed', 'status' => false, 'data' => [], 'message' => "No se encontraron clientes"]], 404);
+            }
+            return response()->json(['response' => ['status' => true, 'data' => $cliente, 'message' => 'Query success']], 200);
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 500);
+        }
+        // ID DEL ESTADO ES 10 SIGNIFICA QUE ESTÁ ACTIVO
+    }
+
+    public function list_cliente_proyecto($cliente_proyecto)
+    {
+        $clientes = Cliente::where('cliente_proyecto_id', $cliente_proyecto)->get();
+        return response()->json(['response' => ['status' => true, 'data' => $clientes, 'message' => 'Query success']], 200);
+    }
 
     public function add(Request $request)
     {
@@ -52,11 +74,42 @@ class ClienteController extends Controller
                 return response()->json(['response' => ['type_error' => 'validation_error', 'status' => false, 'data' => $validar->errors(), 'message' => 'Validation errors']], 200);
             }
 
-            $cliente = new Cliente($request->data);
+            DB::beginTransaction();
+
+            $estado = Estado::where('estado', 'CLIENTE_ACTIVO')->first();
+
+            $data = [
+                'cliente_rut' => $request->data['cliente_rut'],
+                'cliente_dv' => $request->data['cliente_dv'],
+                'cliente_nombre' => $request->data['cliente_nombre'],
+                'cliente_apellido_paterno' => $request->data['cliente_apellido_paterno'],
+                'cliente_apellido_materno' => $request->data['cliente_apellido_materno'],
+                'cliente_telefono' => $request->data['cliente_telefono'],
+                'cliente_direccion' => $request->data['cliente_direccion'],
+                'cliente_genero' => $request->data['cliente_genero'],
+                'cliente_proyecto_id' => $request->data['cliente_proyecto_id'],
+                'cliente_estado_id' => $estado->id
+            ];
+
+            $cliente = new Cliente($data);
             $cliente->save();
 
-            return response()->json(['response' => ['status' => true, 'data' => $cliente, 'message' => 'Cliente Creado']], 200);
+            $clienteUltimo = Cliente::orderBy('created_at', 'DESC')->take(1)->get();
+            $proyecto = Proyecto::with('centro_costo')->where('id', $request->data['cliente_proyecto_id'])->first();
+
+            $datosDetalle = [
+                'ds_centro_costo_id' => $proyecto['centro_costo']->id,
+                'ds_proyecto_id' => $proyecto->id,
+                'ds_cliente_id' => $clienteUltimo[0]->id
+            ];
+
+            $detalle_solicitud = new DetalleSolicitud($datosDetalle);
+            $detalle_solicitud->save();
+
+            DB::commit();
+            return response()->json(['response' => ['status' => true, 'data' => $datosDetalle, 'message' => 'Cliente Creado']], 200);
         } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollback();
             return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 500);
         }
     }
@@ -114,11 +167,11 @@ class ClienteController extends Controller
             ->where('clientes_id', $id)
             ->get(); */
             $proyecto = Proyecto::with('proyecto_cliente', 'proyecto_centro_costo')
-            ->where('id', $id) //DEFINIMOS POR QUE VAMOS A BUSCAR
-            ->get();
+                ->where('id', $id) //DEFINIMOS POR QUE VAMOS A BUSCAR
+                ->get();
 
             // INNER JOIN A LA TABLA, MANDA LOS DATOS EN 1 NIVEL DE ARBOL
-           /*  $proyecto = DB::table('proyectos')->join('clientes', 'proyectos.clientes_id', '=', 'clientes.id')
+            /*  $proyecto = DB::table('proyectos')->join('clientes', 'proyectos.clientes_id', '=', 'clientes.id')
                 ->select('proyectos.*', 'clientes.*')
                 ->get(); */
             /* $cliente = json_decode($proyecto); */
@@ -141,7 +194,7 @@ class ClienteController extends Controller
                 return response()->json(['response' => ['type_error' => 'not_allowed', 'status' => false, 'data' => [], 'message' => "No es posible eliminar el Cliente " . $cliente[0]['nombre'] . " ya que tiene Proyectos asociadas"]], 200);
             }
 
-            $cliente = Cliente::where('id',$id);
+            $cliente = Cliente::where('id', $id);
             $cliente->delete();
 
             return response()->json(['response' => ['status' => true, 'data' => $cliente, 'message' => 'Cliente Eliminado']], 200);

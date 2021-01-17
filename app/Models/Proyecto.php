@@ -25,7 +25,7 @@ class Proyecto extends Model
         'proyecto_descripcion',
         'proyecto_telefono_ad',
         'proyecto_centro_costo_id',
-        'proyecto_cliente_id'
+        'proyecto_estado_id'
     ];
 
     //RELACIÓN DIRECTA HACIA CENTRO DE COSTOS
@@ -35,14 +35,16 @@ class Proyecto extends Model
     }
 
     //RELACIÓN DIRECTA HACIA CLIENTE
-    public function cliente()
+    public function estado()
     {
-        return $this->belongsTo('App\Models\Cliente', 'proyecto_cliente_id');
+        return $this->belongsTo('App\Models\Estado', 'proyecto_estado_id');
     }
-
-    //RELACIÓN INVERSA HACIA SOLICITUD
-    public function solicituds()
+    public function detalle_solicituds()
     {
-        return $this->hasMany('App\Models\Solicitud');
+        return $this->hasMany('App\Models\DetalleSolicitud');
+    }
+    public function clientes()
+    {
+        return $this->hasMany('App\Models\Cliente');
     }
 }

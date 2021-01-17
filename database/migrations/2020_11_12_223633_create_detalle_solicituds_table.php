@@ -15,6 +15,8 @@ class CreateDetalleSolicitudsTable extends Migration
     {
         Schema::create('detalle_solicituds', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('ds_centro_costo_id')->nullable();
+            $table->foreign('ds_centro_costo_id')->references('id')->on('centro_costos')->onDelete('set null');
             $table->unsignedBigInteger('ds_proyecto_id')->nullable();
             $table->foreign('ds_proyecto_id')->references('id')->on('proyectos')->onDelete('set null');
             $table->unsignedBigInteger('ds_cliente_id')->nullable();

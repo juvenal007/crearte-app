@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 use App\JsonResponse\Contracts\ListResponseInterface;
 use App\Validate\CentroCostoValidate;
 use App\Factory\Contracts\CreateCentroCostoInterface;
+use App\Models\DetalleSolicitud;
+use App\Models\Estado;
 use App\Models\Proyecto;
 use App\Repositories\Factory\CentroCostoRepo;
 
@@ -44,21 +46,53 @@ class CentroCostoController extends Controller
         return response()->json(['response' => ['status' => true, 'data' => $centro_costos, 'message' => 'Query success']], 200);
     }
 
+    public function list_activo()
+    {
+        try {
+            $estado = Estado::where('estado', 'CENTRO_COSTO_ACTIVO')->first();
+            $centroCosto = CentroCosto::where('cc_estado_id', $estado->id)->get();
+            if ($centroCosto->count() <= 0) {
+                return response()->json(['response' => ['type_error' => 'not_allowed', 'status' => false, 'data' => [], 'message' => "No se encontraron clientes"]], 404);
+            }
+            return response()->json(['response' => ['status' => true, 'data' => $centroCosto, 'message' => 'Query success']], 200);
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 500);
+        }
+        // ID DEL ESTADO ES 10 SIGNIFICA QUE ESTÁ ACTIVO
+    }
+
     public function add(Request $request)
     {
         try {
-            $validar = CentroCostoValidate::validateAdd($request);
+            /*  $validar = CentroCostoValidate::validateAdd($request);
             if (!$validar->getData()->response->status) {
                 return json_encode($validar->getData());
-            }
-           /*  $centroCosto = $this->Create->createObject($request);
-            $centroCosto = $this->Repo->create($centroCosto); */
+            } */
+            DB::beginTransaction();
+
+            $estado = Estado::where('estado', 'CENTRO_COSTO_ACTIVO')->first();
+
             $centroCosto = new CentroCosto();
-            $centroCosto->nombre = strtoupper($request->data['cc_nombre']);
-            $centroCosto->direccion = strtoupper($request->data['cc_direccion']);
+            $centroCosto->cc_nombre = strtoupper($request->data['cc_nombre']);
+            $centroCosto->cc_direccion = strtoupper($request->data['cc_direccion']);
+            $centroCosto->cc_estado_id = $estado->id;
             $centroCosto->save();
+
+            $centroCostoUltimo = CentroCosto::orderBy('created_at', 'DESC')->take(1)->get();
+
+            $datos = [
+                'ds_centro_costo_id' => $centroCostoUltimo[0]->id,
+                'ds_proyecto_id' => NULL,
+                'ds_cliente_id' => NULL
+            ];
+
+            $detalle_solicitud = new DetalleSolicitud($datos);
+            $detalle_solicitud->save();
+
+            DB::commit();
             return response()->json(['response' => ['status' => true, 'data' => $centroCosto, 'message' => 'Centro de Costos Creado']], 200);
         } catch (\Illuminate\Database\QueryException $e) {
+            DB::rollback();
             return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 500);
         }
     }
@@ -100,7 +134,7 @@ class CentroCostoController extends Controller
                 return response()->json(['response' => ['type_error' => 'not_allowed', 'status' => false, 'data' => [], 'message' => "No es posible eliminar el Centro de Costo " . $centro_costos[0]['nombre'] . " ya que tiene proyectos asociados"]], 200);
             }
 
-            $centro_costos = CentroCosto::where('id',$id);
+            $centro_costos = CentroCosto::where('id', $id);
             $centro_costos->delete();
 
             return response()->json(['response' => ['status' => true, 'data' => $centro_costos, 'message' => 'Centro de Costo Eliminado']], 200);

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Catalogo;
 use App\Models\Proyecto;
 use App\Models\SolicitudCatalogo;
+use App\Models\Unidad;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -21,19 +22,24 @@ class CatalogoController extends Controller
     ];
 
     const CUSTOM_ATTRIBUTES = [
-        'nombre' => 'Nombre',
-        'direccion' => 'Direccion',
-        'descripcion' => 'Descripcion',
-        'telefono_ad' => 'Telefono'
+        'catalogo_material' => 'Material',
+        'catalogo_descripcion' => 'Descripción'
     ];
 
     public function list()
     {
-        $catalogos = Catalogo::all();
-        return response()->json(['response' => ['status' => true, 'data' => $catalogos, 'message' => 'Query success']], 200);
+        try {
+            $catalogo = Catalogo::with('unidad')->orderBy('catalogo_material', 'ASC')->get();
+            if ($catalogo->count() <= 0) {
+                return response()->json(['response' => ['type_error' => 'not_allowed', 'status' => false, 'data' => [], 'message' => "No se encontraron Catalogos"]], 404);
+            }
+            return response()->json(['response' => ['status' => true, 'data' => $catalogo, 'message' => 'Query success']], 200);
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 500);
+        }
     }
 
-    
+
 
     // ID DE SOLICITUD
     public function details($id)
@@ -48,18 +54,18 @@ class CatalogoController extends Controller
             $validar = Validator::make($request->data, [
                 'catalogo_material' => 'required|max:45|min:2',
                 'catalogo_descripcion' => 'required|max:50|min:2',
-                'catalogo_unidad' => 'required|max:50|min:2',           
 
             ], CatalogoController::MESSAGES, CatalogoController::CUSTOM_ATTRIBUTES);
             if ($validar->fails()) {
                 return response()->json(['response' => ['type_error' => 'validation_error', 'status' => false, 'data' => $validar->errors(), 'message' => 'Validation errors']], 200);
             }
-           
+
             $catalogo = new Catalogo();
+            $unidad = Unidad::find(intval($request->data['catalogo_unidad_id'], 10));
             $catalogo->catalogo_material = strtoupper($request->data['catalogo_material']);
             $catalogo->catalogo_descripcion = strtoupper($request->data['catalogo_descripcion']);
-            $catalogo->catalogo_unidad = strtoupper($request->data['catalogo_unidad']);  
-            $catalogo->save();            
+            $catalogo->catalogo_unidad_id = $unidad->id;
+            $catalogo->save();
 
             return response()->json(['response' => ['status' => true, 'data' => $catalogo, 'message' => 'Producto Catalogo Creado']], 200);
         } catch (\Illuminate\Database\QueryException $e) {
@@ -73,7 +79,7 @@ class CatalogoController extends Controller
             $validar = Validator::make($request->data, [
                 'catalogo_material' => 'required|max:45|min:2',
                 'catalogo_descripcion' => 'required|max:50|min:2',
-                'catalogo_unidad' => 'required|max:50|min:2',               
+                'catalogo_unidad' => 'required|max:50|min:2',
             ], CatalogoController::MESSAGES, CatalogoController::CUSTOM_ATTRIBUTES);
             if ($validar->fails()) {
                 return response()->json(['response' => ['type_error' => 'validation_error', 'status' => false, 'data' => $validar->errors(), 'message' => 'Validation errors']], 200);
@@ -82,7 +88,7 @@ class CatalogoController extends Controller
             $catalogo = Catalogo::find($id);
             $catalogo->catalogo_material = strtoupper($request->data['catalogo_material']);
             $catalogo->catalogo_descripcion = strtoupper($request->data['catalogo_descripcion']);
-            $catalogo->catalogo_unidad = strtoupper($request->data['catalogo_unidad']);      
+            $catalogo->catalogo_unidad = strtoupper($request->data['catalogo_unidad']);
             $catalogo->save();
 
             //DEVELOP BRANCH
@@ -94,7 +100,7 @@ class CatalogoController extends Controller
         }
     }
 
-    
+
     public function delete($id)
     {
         try {

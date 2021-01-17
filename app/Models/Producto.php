@@ -22,7 +22,7 @@ class Producto extends Model
     protected $fillable = [
         'producto_material',
         'producto_descripcion',
-        'producto_unidad',
+        'producto_unidad_id',
         'producto_proveedor_id'
     ];
 
@@ -30,6 +30,11 @@ class Producto extends Model
         public function proveedor()
         {
             return $this->belongsTo('App\Models\Proveedor', 'producto_proveedor_id');
+        }
+
+        public function catalogos()
+        {
+            return $this->hasMany('App\Models\SolicitudCatalogo');
         }
 
 

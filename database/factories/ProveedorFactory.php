@@ -24,7 +24,8 @@ class ProveedorFactory extends Factory
     {
         return [
             'proveedor_rut' => $this->faker->numerify($string = '#######'),
-            'proveedor_nombre' => $this->faker->numberBetween($min = 1, $max= 9),
+            'proveedor_dv' => $this->faker->numberBetween($min = 1, $max= 9),
+            'proveedor_nombre' => 'NOMBRE-'.rand(1000, 4000),
             'proveedor_apellido_paterno' => 'APELLIDO PATERNO-'.rand(1000, 4000),
             'proveedor_apellido_materno' => 'APELLIDO MATERNO-'.rand(1000, 4000),
             'proveedor_direccion' => 'DIRECCIÓN-'.rand(1000, 4000),

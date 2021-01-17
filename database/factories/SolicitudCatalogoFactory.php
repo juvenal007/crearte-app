@@ -21,10 +21,10 @@ class SolicitudCatalogoFactory extends Factory
      */
     public function definition()
     {
-        return [
+  /*       return [
             'sc_cantidad' => $this->faker->numberBetween($min = 1, $max= 20),
             'sc_solicitud_id' => $this->faker->numberBetween($min = 1, $max= 10),
             'sc_catalogo_id' => $this->faker->numberBetween($min = 1, $max= 50)
-        ];
+        ]; */
     }
 }

@@ -22,12 +22,21 @@ class CentroCosto extends Model
     protected $fillable = [
         'cc_nombre',
         'cc_direccion',
+        'cc_estado_id'
     ];
 
     //RELACIÓN INVERSA HACIA CENTRO DE COSTOS
     public function proyectos()
     {
         return $this->hasMany('App\Models\Proyecto');
+    }
+    public function detalle_solicituds()
+    {
+        return $this->hasMany('App\Models\DetalleSolicitud');
+    }
+    public function estado()
+    {
+        return $this->belongsTo('App\Models\DetalleSolicitud', 'cc_estado_id');
     }
 
 

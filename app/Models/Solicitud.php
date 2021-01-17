@@ -25,20 +25,25 @@ class Solicitud extends Model
         'solicitud_descripcion',
         'solicitud_nombre_solicitante',
         'solicitud_estado_id',
-        'solicitud_proyecto_id',
-        'solicitud_solicitud_id'
+        'solicitud_detalle_solicitud_id',
+        'solicitud_tipo_solicitud_id',
     ];
 
     //RELACIÓN DIRECTA HACIA PROYECTOS
-    public function proyecto()
+    public function solicitud_detalle_solicitud()
     {
-        return $this->belongsTo('App\Models\Proyecto', 'solicitud_proyecto_id');
+        return $this->belongsTo('App\Models\Proyecto', 'solicitud_detalle_solicitud_id');
     }
 
     //RELACIÓN DIRECTA HACIA ESTADOS
     public function estado()
     {
         return $this->belongsTo('App\Models\Estado', 'solicitud_estado_id');
+    }
+    //RELACIÓN DIRECTA HACIA ESTADOS
+    public function tipo_solicitud()
+    {
+        return $this->belongsTo('App\Models\TipoSolicitud', 'solicitud_tipo_solicitud_id');
     }
 
       //RELACIÓN INVERSA HACIA SOLICITUD_CATALOGO

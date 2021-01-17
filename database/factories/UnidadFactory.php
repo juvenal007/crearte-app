@@ -2,17 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\Catalogo;
+use App\Models\Unidad;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class CatalogoFactory extends Factory
+class UnidadFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Catalogo::class;
+    protected $model = Unidad::class;
 
     /**
      * Define the model's default state.
@@ -21,11 +21,8 @@ class CatalogoFactory extends Factory
      */
     public function definition()
     {
-
         return [
-            'catalogo_material' => 'MATERIAL-'.rand(1000, 4000),
-            'catalogo_descripcion' => 'DESCRIPCIÓN-'.rand(1000, 4000),
-            'catalogo_unidad_id' => $this->faker->numberBetween($min = 1, $max= 3),
+            //
         ];
     }
 }
