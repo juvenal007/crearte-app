@@ -2,9 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Catalogo;
+use App\Models\CentroCosto;
+use App\Models\Cliente;
+use App\Models\DetalleSolicitud;
 use App\Models\Estado;
+use App\Models\Proyecto;
 use App\Models\Solicitud;
 use App\Models\SolicitudCatalogo;
+use App\Models\TipoSolicitud;
 use Faker\Documentor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -39,7 +45,7 @@ class SolicitudController extends Controller
         $solicituds = DB::table('solicituds')->get();
         return response()->json(['response' => ['status' => true, 'data' => $solicituds, 'message' => 'Query success']], 200);
     }
-  /*   public function all()
+    /*   public function all()
     {
         $solicitudes = Solicitud::with('proyectos')
             ->where('estados_id',1) //DEFINIMOS POR QUE VAMOS A BUSCAR
@@ -47,22 +53,23 @@ class SolicitudController extends Controller
         return response()->json(['response' => ['status' => true, 'data' => $solicitudes, 'message' => 'Query success']], 200);
     } */
 
-    public function generatePDF()
+    public function generatePDF($data)
     {
-        $data = [
-            'title' => 'Welcome to ItSolutionStuff.com',
-            'date' => date('m/d/Y')
-        ];
-        $pdf = PDF::loadView('preview', $data);
+        $pdf = PDF::loadView('preview', compact('data'), $data);
+        $pdf->setPaper('letter', 'portrait');
         /* $archivo = PDF::loadHTML('<h1>hola</h1>')->setPaper('a4', 'landscape')->setWarnings(false)->save('myfile.pdf'); */
         $filename = uniqid('solicitud-', true) . '.';
         $nombre = date("Y-m-d-H-i-s");
         $final_name = "Solicitud-{$nombre}.pdf";
 
-        Storage::disk('solicitud')->put($final_name, $pdf->output());
-        $url = "http://localhost:8000/solicitudes/".$final_name;
+        Storage::disk('documento')->put($final_name, $pdf->output());
+
+        $url = "http://localhost:8000/solicitudes/" . $final_name;
+        $url = Storage::url($final_name);
+
         return $url;
     }
+
 
     public function add(Request $request)
     {
@@ -75,53 +82,58 @@ class SolicitudController extends Controller
             } */
 
             $ultimoId = Solicitud::all()->count();
-            $estado = Estado::where('estado', 'SOLICITUD_ACTIVA');
+            $estado = Estado::where('estado', 'SOLICITUD_ACTIVA')->first();
+            $tipoSolicitud = TipoSolicitud::find($request->data['solicitud_tipo']);
 
-            if($ultimoId == 0)
-            {
-                $datos = [
-                    'solicitud_codigo' => crc32(1),
-                    'solicitud_nombre' => $request->data['solicitud_nombre'],
-                    'solicitud_descripcion' => $request->data['solicitud_descripcion'],
-                    'solicitud_nombre_solicitante' => $request->data['solicitud_nombre_solicitante'],
-                    'solicitud_estado_id' => $estado->id,
-                    'solicitud_detalle_solicitud_id' => $request->data['proyecto']['id'],
-                ];
-            }
+            $datos = $this->datosTipoSolicitud($request, $tipoSolicitud);
 
-          /*   $solicitud = $request->data;
+            $datosSolicitud = $this->datosSolicitud($request, $ultimoId, $estado, $tipoSolicitud, $datos);
 
             // INDICAMOS A MYSQL EL TIPO DE TRANSACCIÓN YA QUE SERÁN SIMULTANEAS
             DB::beginTransaction();
 
-            $solicitud = new Solicitud($datos);
+            $solicitud = new Solicitud($datosSolicitud);
             $solicitud->save();
 
             $carro = $request->data['carro'];
 
             foreach ($carro as $atributo => $producto) {
-                $datos = [
-                    'solicitud_catalogo_cantidad' => (int) $producto['cantidad'],
-                    'solicituds_id' => $solicitud->id,
-                    'catalogos_id' => $producto['id']
+                $catalogo = Catalogo::find($producto['id']);
+                $datosCarro = [
+                    'sc_cantidad' => (int) $producto['cantidad'],
+                    'sc_solicitud_id' => $solicitud->id,
+                    'sc_catalogo_id' => $catalogo->id
                 ];
-                $solicitud_catalogo = new SolicitudCatalogo($datos);
+                $solicitud_catalogo = new SolicitudCatalogo($datosCarro);
                 $solicitud_catalogo->save();
             }
 
-              $url = $this->generatePDF(); */
+            $datos_solicitud_catalogo = SolicitudCatalogo::with('catalogo', 'catalogo.unidad')->where('sc_solicitud_id', $solicitud->id)->get();
+
+            $fecha = date("d/m/Y H:i:s");
+
+            $datosPdf = [
+                'carro' => [
+                    'estado' => $estado,
+                    'solicitud_tipo' => $tipoSolicitud,
+                    'datos_tipo_solicitud' => $datos,
+                    'datos_catalogo' => $datos_solicitud_catalogo,
+                    'solicitud' => $solicitud,
+                    'fecha' => $fecha
+                ]
+            ];
 
 
 
-
+            $url = $this->generatePDF($datosPdf);
 
             // GUARDAMOS EN LA BASE DE DATOS
-        /*     DB::commit(); */
+            DB::commit();
 
-            return response()->json(['response' => ['status' => true, 'data' => ['solicitud' => $ultimoId, 'pdf' => $ultimoId, 'carro' => $ultimoId], 'message' => 'Datos Creados']], 200);
+            return response()->json(['response' => ['status' => true, 'data' => ['solicitud' => $solicitud, 'pdf' => $url, 'carro' => $datosPdf], 'message' => 'Datos Creados']], 200);
         } catch (\Illuminate\Database\QueryException $e) {
             // SI FALLA VOLVEMOS AL ESTADO INICIAL
-          /*   DB::rollback(); */
+            DB::rollback();
             return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 500);
         }
     }
@@ -129,10 +141,90 @@ class SolicitudController extends Controller
     public function details($id)
     {
         try {
-           $proyecto = Proyecto::with( 'clientes', 'centro_costos')->where('id', $id)->get();
+            $proyecto = Proyecto::with('clientes', 'centro_costos')->where('id', $id)->get();
             return response()->json(['response' => ['status' => true, 'data' => $proyecto, 'message' => 'Proyecto Actualizado']], 200);
         } catch (\Illuminate\Database\QueryException $error) {
             return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $error, 'message' => 'Error processing']], 500);
         }
+    }
+
+    public function datosTipoSolicitud(Request $request, $tipoSolicitud)
+    {
+        switch ($tipoSolicitud->ts_nombre) {
+            case 'CLIENTE':
+                $cliente = Cliente::find($request->data['cliente']['id']);
+                $proyecto = Proyecto::find($request->data['cliente']['cliente']['proyecto']['id']);
+                $centroCosto = CentroCosto::find($request->data['cliente']['cliente']['proyecto']['centro_costo']['id']);
+                $detalle_solicitud = DetalleSolicitud::where('ds_proyecto_id', $proyecto->id)
+                    ->where('ds_cliente_id', $cliente->id)
+                    ->where('ds_centro_costo_id', $centroCosto->id)
+                    ->first();
+
+                return [
+                    'cliente' => $cliente,
+                    'proyecto' => $proyecto,
+                    'centro_costo' => $centroCosto,
+                    'detalle_solicitud' => $detalle_solicitud
+                ];
+                break;
+
+            case 'PROYECTO':
+                $proyecto = Proyecto::find($request->data['proyecto']['id']);
+                $centroCosto = CentroCosto::find($request->data['proyecto']['proyecto']['centro_costo']['id']);
+                $detalle_solicitud = DetalleSolicitud::where('ds_proyecto_id', $proyecto->id)
+                    ->where('ds_cliente_id', NULL)
+                    ->where('ds_centro_costo_id', $centroCosto->id)
+                    ->first();
+
+                return [
+                    'proyecto' => $proyecto,
+                    'centro_costo' => $centroCosto,
+                    'detalle_solicitud' => $detalle_solicitud
+                ];
+                break;
+            case 'CENTRO DE COSTO':
+                $centroCosto = CentroCosto::find($request->data['centro_costo']['id']);
+                $detalle_solicitud = DetalleSolicitud::where('ds_proyecto_id', NULL)
+                    ->where('ds_cliente_id', NULL)
+                    ->where('ds_centro_costo_id', $centroCosto->id)
+                    ->first();
+
+                return [
+                    'centro_costo' => $centroCosto,
+                    'detalle_solicitud' => $detalle_solicitud
+                ];
+                break;
+            default:
+                $detalle_solicitud = NULL;
+                return [
+                    'detalle_solicitud' => $detalle_solicitud
+                ];
+                break;
+        }
+    }
+
+    public function datosSolicitud(Request $request, $ultimoId, $estado, $tipoSolicitud, $datos)
+    {
+        if ($ultimoId == 0) {
+            return [
+                'solicitud_codigo' => 'SO-' . crc32(1),
+                'solicitud_nombre' => $request->data['solicitud_nombre'],
+                'solicitud_descripcion' => $request->data['solicitud_descripcion'],
+                'solicitud_nombre_solicitante' => $request->data['solicitud_nombre_solicitante'],
+                'solicitud_estado_id' => $estado->id,
+                'solicitud_detalle_solicitud_id' => $datos['detalle_solicitud']->id,
+                'solicitud_tipo_solicitud_id' => $tipoSolicitud->id
+            ];
+        }
+
+        return [
+            'solicitud_codigo' => 'SO-' . crc32($ultimoId),
+            'solicitud_nombre' => $request->data['solicitud_nombre'],
+            'solicitud_descripcion' => $request->data['solicitud_descripcion'],
+            'solicitud_nombre_solicitante' => $request->data['solicitud_nombre_solicitante'],
+            'solicitud_estado_id' => $estado->id,
+            'solicitud_detalle_solicitud_id' => $datos['detalle_solicitud']->id,
+            'solicitud_tipo_solicitud_id' => $tipoSolicitud->id
+        ];
     }
 }

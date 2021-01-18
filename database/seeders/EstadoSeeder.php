@@ -16,11 +16,11 @@ class EstadoSeeder extends Seeder
     {
         DB::table('estados')->insert([
             [
-                'estado' => 'CREADA',
+                'estado' => 'SOLICITUD_ACTIVA',
                 'estado_descripcion' => 'CREADA'
             ],
             [
-                'estado' => 'EN PROCESO',
+                'estado' => 'SOLICITUD_TERMINADO',
                 'estado_descripcion' => 'EN PROCESO'
             ],
             [
