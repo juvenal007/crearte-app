@@ -110,7 +110,6 @@
         padding-top: 5px;
         padding-right: 15px;
     }
-
     .tg {
         border: none;
         border-collapse: collapse;
@@ -182,6 +181,42 @@
             display: block;
             page-break-before: always;
         }
+    }
+
+    .ti {
+        border: none;
+        border-collapse: collapse;
+        border-spacing: 0;
+    }
+
+    .ti td {
+        border: none;
+        font-family: Arial, sans-serif;
+        font-size: 10px;
+        overflow: hidden;
+        padding: 2px 5px;
+        word-break: normal;
+    }
+
+/*     .ti tr td:last-child {
+        width: 1%;
+        white-space: nowrap;
+    } */
+
+    .ti th {
+        border: none;
+        font-family: Arial, sans-serif;
+        font-size: 10px;
+        font-weight: normal;
+        overflow: hidden;
+        padding: 2px 5px;
+        word-break: normal;
+    }
+
+    .ti .tg-0pky {
+        border-color: inherit;
+        text-align: left;
+        vertical-align: top
     }
 
 </style>
@@ -288,82 +323,88 @@
             <span class="">
                 <h3>SOLICITUD</h3>
             </span>
-            <table width="50%" class="">
+            <table width="50%" class="ti">
                 <tbody width="50%">
                     <tr>
                         <td width="50%">
-                            <span>Tipo Solicitud:</span>
+                            <span  class="bold">Tipo Solicitud:</span>
                         </td>
                         <td width="50%">
-                            <span class="bold">{{ $data['carro']['solicitud_tipo']['ts_nombre'] }} -
+                            <span >{{ $data['carro']['solicitud_tipo']['ts_nombre'] }} -
                                 {{ $data['carro']['solicitud_tipo']['ts_descripcion'] }}</span>
                         </td>
                     </tr>
                     <tr>
                         <td width="50%">
-                            <span>Nombre Solicitud:</span>
+                            <span class="bold">Nombre Solicitud:</span>
                         </td>
                         <td width="50%">
-                            <span class="bold">{{ $data['carro']['solicitud']['solicitud_nombre'] }}</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="50%">
-                            <span>Descripción Solicitud:</span>
-                        </td>
-                        <td width="50%">
-                            <span class="bold">{{ $data['carro']['solicitud']['solicitud_descripcion'] }}</span>
+                            <span >{{ $data['carro']['solicitud']['solicitud_nombre'] }}</span>
                         </td>
                     </tr>
                     <tr>
                         <td width="50%">
-                            <span>Cliente:</span>
+                            <span class="bold">Descripción Solicitud:</span>
                         </td>
                         <td width="50%">
-                            <span class="bold">{{ $data['carro']['datos_tipo_solicitud']['cliente']['cliente_nombre'] }}
+                            <span >{{ $data['carro']['solicitud']['solicitud_descripcion'] }}</span>
+                        </td>
+                    </tr>
+                    @if (isset($data['carro']['datos_tipo_solicitud']['cliente']))
+                    <tr>
+                        <td width="50%">
+                            <span class="bold">Cliente:</span>
+                        </td>
+                        <td width="50%">
+                            <span >{{ $data['carro']['datos_tipo_solicitud']['cliente']['cliente_nombre'] }}
                                 {{ $data['carro']['datos_tipo_solicitud']['cliente']['cliente_apellido_paterno'] }}
                                 {{ $data['carro']['datos_tipo_solicitud']['cliente']['cliente_apellido_materno'] }}</span>
                         </td>
                     </tr>
                     <tr>
                         <td width="50%">
-                            <span>Telefono:</span>
+                            <span class="bold">Telefono:</span>
                         </td>
                         <td width="50%">
                             <span
-                                class="bold">{{ $data['carro']['datos_tipo_solicitud']['cliente']['cliente_telefono'] }}</span>
+                                >{{ $data['carro']['datos_tipo_solicitud']['cliente']['cliente_telefono'] }}</span>
                         </td>
                     </tr>
                     <tr>
                         <td width="50%">
-                            <span>Dirección:</span>
+                            <span class="bold">Dirección:</span>
                         </td>
                         <td width="50%">
                             <span
-                                class="bold">{{ $data['carro']['datos_tipo_solicitud']['cliente']['cliente_direccion'] }}</span>
+                                >{{ $data['carro']['datos_tipo_solicitud']['cliente']['cliente_direccion'] }}</span>
                         </td>
                     </tr>
+                    @endif
+                    @if (isset($data['carro']['datos_tipo_solicitud']['proyecto']))
                     <tr>
                         <td width="50%">
-                            <span>Proyecto:</span>
+                            <span class="bold">Proyecto:</span>
                         </td>
                         <td width="50%">
                             <span
-                                class="bold">{{ $data['carro']['datos_tipo_solicitud']['proyecto']['proyecto_nombre'] }}
+                               >{{ $data['carro']['datos_tipo_solicitud']['proyecto']['proyecto_nombre'] }}
                                 {{ $data['carro']['datos_tipo_solicitud']['proyecto']['proyecto_telefono_ad'] }} -
                                 {{ $data['carro']['datos_tipo_solicitud']['proyecto']['proyecto_descripcion'] }} -
                                 {{ $data['carro']['datos_tipo_solicitud']['proyecto']['proyecto_direccion'] }}</span>
                         </td>
                     </tr>
+                    @endif
+                    @if (isset($data['carro']['datos_tipo_solicitud']['centro_costo']))
                     <tr>
                         <td width="50%">
-                            <span>Centro de Costo:</span>
+                            <span class="bold">Centro de Costo:</span>
                         </td>
                         <td width="50%">
-                            <span class="bold">{{ $data['carro']['datos_tipo_solicitud']['centro_costo']['cc_nombre'] }}
+                            <span>{{ $data['carro']['datos_tipo_solicitud']['centro_costo']['cc_nombre'] }}
                                 - {{ $data['carro']['datos_tipo_solicitud']['centro_costo']['cc_direccion'] }}</span>
                         </td>
                     </tr>
+                    @endif
                 </tbody>
             </table>
             <br>

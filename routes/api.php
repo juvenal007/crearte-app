@@ -105,7 +105,9 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     // SOLICITUD
     Route::get('/solicitud/list/', [SolicitudController::class, 'list']);
     Route::get('/solicitud/list/all', [SolicitudController::class, 'all']);
+    Route::get('/solicitud/list/all_activa', [SolicitudController::class, 'all_activa']);
     Route::get('/solicitud/details/{id}', [SolicitudController::class, 'details']);
+    Route::get('/solicitud/details_carro/{id}', [SolicitudController::class, 'details_carro']);
     Route::post('/solicitud/store/', [SolicitudController::class, 'add']);
     Route::put('/solicitud/update/{id}', [SolicitudController::class, 'edit']);
     Route::delete('/solicitud/delete/{id}', [SolicitudController::class, 'delete']);

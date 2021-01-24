@@ -32,7 +32,7 @@ class Solicitud extends Model
     //RELACIÓN DIRECTA HACIA PROYECTOS
     public function solicitud_detalle_solicitud()
     {
-        return $this->belongsTo('App\Models\Proyecto', 'solicitud_detalle_solicitud_id');
+        return $this->belongsTo('App\Models\DetalleSolicitud', 'solicitud_detalle_solicitud_id');
     }
 
     //RELACIÓN DIRECTA HACIA ESTADOS

@@ -45,13 +45,16 @@ class SolicitudController extends Controller
         $solicituds = DB::table('solicituds')->get();
         return response()->json(['response' => ['status' => true, 'data' => $solicituds, 'message' => 'Query success']], 200);
     }
-    /*   public function all()
+    public function all_activa()
     {
-        $solicitudes = Solicitud::with('proyectos')
-            ->where('estados_id',1) //DEFINIMOS POR QUE VAMOS A BUSCAR
-            ->get();
-        return response()->json(['response' => ['status' => true, 'data' => $solicitudes, 'message' => 'Query success']], 200);
-    } */
+        try {
+            $estado = Estado::where('estado', 'SOLICITUD_ACTIVA')->first();
+            $solicituds = Solicitud::with('tipo_solicitud', 'estado', 'solicitud_detalle_solicitud', 'solicitud_detalle_solicitud.cliente', 'solicitud_detalle_solicitud.proyecto', 'solicitud_detalle_solicitud.centro_costo')->where('solicitud_estado_id', $estado->id)->get();
+            return response()->json(['response' => ['status' => true, 'data' => $solicituds, 'message' => 'Query success']], 200);
+        } catch (\Illuminate\Database\QueryException $error) {
+            return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $error, 'message' => 'Error processing']], 500);
+        }
+    }
 
     public function generatePDF($data)
     {
@@ -138,11 +141,13 @@ class SolicitudController extends Controller
         }
     }
 
-    public function details($id)
+    public function details_carro($id)
     {
         try {
-            $proyecto = Proyecto::with('clientes', 'centro_costos')->where('id', $id)->get();
-            return response()->json(['response' => ['status' => true, 'data' => $proyecto, 'message' => 'Proyecto Actualizado']], 200);
+           /*  $solicitud = Solicitud::with('solicitud_catalogos', 'tipo_solicitud', 'estado', 'solicitud_detalle_solicitud', 'solicitud_detalle_solicitud.cliente', 'solicitud_detalle_solicitud.proyecto', 'solicitud_detalle_solicitud.centro_costo')->where('id', $id)->first(); */
+            /* $solicitud = Solicitud::with('solicitud_catalogos')->where('id', $id)->get(); */
+            $solicitud_catalogo = SolicitudCatalogo::with('solicitud', 'catalogo', 'catalogo.unidad')->where('sc_solicitud_id', $id)->get();
+            return response()->json(['response' => ['status' => true, 'data' => $solicitud_catalogo, 'message' => 'Proyecto Actualizado']], 200);
         } catch (\Illuminate\Database\QueryException $error) {
             return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $error, 'message' => 'Error processing']], 500);
         }
@@ -217,14 +222,26 @@ class SolicitudController extends Controller
             ];
         }
 
-        return [
-            'solicitud_codigo' => 'SO-' . crc32($ultimoId),
-            'solicitud_nombre' => $request->data['solicitud_nombre'],
-            'solicitud_descripcion' => $request->data['solicitud_descripcion'],
-            'solicitud_nombre_solicitante' => $request->data['solicitud_nombre_solicitante'],
-            'solicitud_estado_id' => $estado->id,
-            'solicitud_detalle_solicitud_id' => $datos['detalle_solicitud']->id,
-            'solicitud_tipo_solicitud_id' => $tipoSolicitud->id
-        ];
+        if (isset($datos['detalle_solicitud'])) {
+            return [
+                'solicitud_codigo' => 'SO-' . crc32($ultimoId),
+                'solicitud_nombre' => $request->data['solicitud_nombre'],
+                'solicitud_descripcion' => $request->data['solicitud_descripcion'],
+                'solicitud_nombre_solicitante' => $request->data['solicitud_nombre_solicitante'],
+                'solicitud_estado_id' => $estado->id,
+                'solicitud_detalle_solicitud_id' => $datos['detalle_solicitud']->id,
+                'solicitud_tipo_solicitud_id' => $tipoSolicitud->id
+            ];
+        } else {
+            return [
+                'solicitud_codigo' => 'SO-' . crc32($ultimoId),
+                'solicitud_nombre' => $request->data['solicitud_nombre'],
+                'solicitud_descripcion' => $request->data['solicitud_descripcion'],
+                'solicitud_nombre_solicitante' => $request->data['solicitud_nombre_solicitante'],
+                'solicitud_estado_id' => $estado->id,
+                'solicitud_detalle_solicitud_id' => NULL,
+                'solicitud_tipo_solicitud_id' => $tipoSolicitud->id
+            ];
+        }
     }
 }
