@@ -323,7 +323,7 @@
                 </tbody>
             </table> --}}
             <span class="">
-                <h3>SOLICITUD</h3>
+                <h3>ORDEN DE COMPRA</h3>
             </span>
             <table width="50%" class="ti">
                 <tbody width="50%">
@@ -332,8 +332,7 @@
                             <span class="bold">Tipo Solicitud:</span>
                         </td>
                         <td width="50%">
-                            <span>{{ $data['carro']['solicitud']['tipo_solicitud']['ts_nombre'] }} -
-                                {{ $data['carro']['solicitud']['tipo_solicitud']['ts_descripcion'] }}</span>
+                            <span>{{ $data['carro']['solicitud']['tipo_solicitud']['ts_nombre'] }}</span>
                         </td>
                     </tr>
                     <tr>
