@@ -13,4 +13,13 @@ class ProductoController extends Controller
         $productos = Producto::all();
         return response()->json(['response' => ['status' => true, 'data' => $productos, 'message' => 'Query success']], 200);
     }
+    public function buscarProducto($id)
+    {
+        try {
+            $producto = Producto::find($id)->first();
+            return $producto;
+        } catch (\Illuminate\Database\QueryException $e) {
+            return $e;
+        }
+    }
 }

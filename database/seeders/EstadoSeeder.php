@@ -20,7 +20,7 @@ class EstadoSeeder extends Seeder
                 'estado_descripcion' => 'CREADA'
             ],
             [
-                'estado' => 'SOLICITUD_TERMINADO',
+                'estado' => 'SOLICITUD_TERMINADA',
                 'estado_descripcion' => 'EN PROCESO'
             ],
             [
@@ -65,6 +65,14 @@ class EstadoSeeder extends Seeder
             ],
             [
                 'estado' => 'CENTRO_COSTO_TERMINADO',
+                'estado_descripcion' => 'TERMINADA'
+            ],
+            [
+                'estado' => 'COTIZACION_ACTIVA',
+                'estado_descripcion' => 'TERMINADA'
+            ],
+            [
+                'estado' => 'COTIZACION_TERMINADA',
                 'estado_descripcion' => 'TERMINADA'
             ],
         ]

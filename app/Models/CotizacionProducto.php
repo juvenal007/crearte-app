@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Producto extends Model
+class CotizacionProducto extends Model
 {
     use HasFactory, SoftDeletes;
 
     //DEFINIMOS EL NOMBRE DE LA TABLA
-    protected $table = 'productos';
+    protected $table = 'cotizacion_productos';
     //DEFINIMOS LA CLAVE PRIMARIA DE LA TABLA, AUTOMATICAMENTE SE LE ASIGNA AUTO INCREMENT
     protected $primaryKey = 'id';
 
@@ -20,29 +20,24 @@ class Producto extends Model
 
     //ATRIBUTOS DE LA TABLE
     protected $fillable = [
-        'producto_material',
-        'producto_descripcion',
-        'producto_precio',
-        'producto_unidad_id',
-        'producto_proveedor_id'
+        'cp_cantidad',
+        'cp_precio',
+        'cp_total',
+        'cp_cotizacion_id',
+        'cp_producto_id'
     ];
 
         //RELACIÓN DIRECTA HACIA PROVEEDOR
-        public function proveedor()
+        public function cotizacion()
         {
-            return $this->belongsTo('App\Models\Proveedor', 'producto_proveedor_id');
-        }
-        public function unidad()
-        {
-            return $this->belongsTo('App\Models\Unidad', 'producto_unidad_id');
-        }
-        public function cotizacion_productos()
-        {
-            return $this->hasMany('App\Models\CotizacionProductos');
+            return $this->belongsTo('App\Models\Cotizacion', 'cp_cotizacion_id');
         }
 
-
-
+        public function producto()
+        {
+            return $this->belongsTo('App\Models\Producto', 'cp_producto_id');
+        }
+      
 
 
 

@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\CentroCostoController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\CotizacionController;
 use App\Http\Controllers\EstadoController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ProductoController;
@@ -130,6 +131,15 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::put('/unidad/update/{id}', [UnidadController::class, 'edit']);
     Route::delete('/unidad/delete/{id}', [UnidadController::class, 'delete']);
     Route::get('/unidad/pluck', [UnidadController::class, 'pluck']);
+
+    // COTIZACIÓN
+    Route::get('/cotizacion/list/', [CotizacionController::class, 'list']);
+    Route::get('/cotizacion/list/all', [CotizacionController::class, 'all']);
+    Route::get('/cotizacion/details/{id}', [CotizacionController::class, 'details']);
+    Route::post('/cotizacion/store/', [CotizacionController::class, 'add']);
+    Route::put('/cotizacion/update/{id}', [CotizacionController::class, 'edit']);
+    Route::delete('/cotizacion/delete/{id}', [CotizacionController::class, 'delete']);
+    Route::get('/cotizacion/pluck', [CotizacionController::class, 'pluck']);
 
     //SOME
 });

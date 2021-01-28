@@ -25,7 +25,7 @@ class Cotizacion extends Model
         'cotizacion_iva',
         'cotizacion_total',
         'cotizacion_fecha_emision',
-        'cotizacion_fehca_vigencia',
+        'cotizacion_fecha_vigencia',
         'cotizacion_solicitud_id',
         'cotizacion_proveedor_id',
         'cotizacion_estado_id',
@@ -46,5 +46,9 @@ class Cotizacion extends Model
     public function estado()
     {
         return $this->belongsTo('App\Models\Estado', 'cotizacion_estado_id');
+    }
+    public function cotizacion_productos()
+    {
+        return $this->hasMany('App\Models\CotizacionProductos');
     }
 }

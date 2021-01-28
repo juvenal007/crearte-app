@@ -20,8 +20,8 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(CreateCentroCostoInterface::class, CreateCentroCosto::class);
-        $this->app->bind(CentroCostoRepoInterface::class, CentroCostoRepo::class);   
-        $this->app->bind(ListResponseInterface::class, ListResponse::class);   
+        $this->app->bind(CentroCostoRepoInterface::class, CentroCostoRepo::class);
+        $this->app->bind(ListResponseInterface::class, ListResponse::class);
     }
 
     /**
@@ -31,6 +31,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        
+
     }
 }

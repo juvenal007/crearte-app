@@ -61,14 +61,13 @@ class SolicitudController extends Controller
         $pdf = PDF::loadView('preview', compact('data'), $data);
         $pdf->setPaper('letter', 'portrait');
         /* $archivo = PDF::loadHTML('<h1>hola</h1>')->setPaper('a4', 'landscape')->setWarnings(false)->save('myfile.pdf'); */
-        $filename = uniqid('solicitud-', true) . '.';
         $nombre = date("Y-m-d-H-i-s");
         $final_name = "Solicitud-{$nombre}.pdf";
 
         Storage::disk('documento')->put($final_name, $pdf->output());
 
-        $url = "http://localhost:8000/solicitudes/" . $final_name;
-        $url = Storage::url($final_name);
+        $url = "http://localhost:8000/documento/" . $final_name;
+        /* $url = Storage::url($final_name); */
 
         return $url;
     }
@@ -112,7 +111,7 @@ class SolicitudController extends Controller
             }
 
             $datos_solicitud_catalogo = SolicitudCatalogo::with('catalogo', 'catalogo.unidad')->where('sc_solicitud_id', $solicitud->id)->get();
-
+            // FECHA INGRESO O GENERADA?
             $fecha = date("d/m/Y H:i:s");
 
             $datosPdf = [
@@ -133,7 +132,7 @@ class SolicitudController extends Controller
             // GUARDAMOS EN LA BASE DE DATOS
             DB::commit();
 
-            return response()->json(['response' => ['status' => true, 'data' => ['solicitud' => $solicitud, 'pdf' => $url, 'carro' => $datosPdf], 'message' => 'Datos Creados']], 200);
+            return response()->json(['response' => ['status' => true, 'data' => ['solicitud' => $solicitud, 'pdf' => $url, 'carro' => $datosPdf], 'message' => 'Solicitud creada.']], 200);
         } catch (\Illuminate\Database\QueryException $e) {
             // SI FALLA VOLVEMOS AL ESTADO INICIAL
             DB::rollback();

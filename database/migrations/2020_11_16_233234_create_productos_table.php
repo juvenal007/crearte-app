@@ -17,6 +17,7 @@ class CreateProductosTable extends Migration
             $table->id();
             $table->string('producto_material', 100);
             $table->string('producto_descripcion', 200);
+            $table->decimal('producto_precio', 8, 2);
             $table->unsignedBigInteger('producto_proveedor_id')->nullable();
             $table->foreign('producto_proveedor_id')->references('id')->on('proveedors')->onDelete('set null');
             $table->unsignedBigInteger('producto_unidad_id')->nullable();

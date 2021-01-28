@@ -65,10 +65,16 @@ return [
             'visibility' => 'public',
         ],
 
-        'solicitud' => [
+        'solicitudes' => [
             'driver' => 'local',
             'root' => storage_path('app/solicitudes'),
             'url' => env('APP_URL').'/solicitudes',
+            'visibility' => 'public',
+        ],
+        'ordenesCompra' => [
+            'driver' => 'local',
+            'root' => storage_path('app/ordenesCompra'),
+            'url' => env('APP_URL').'/ordenesCompra',
             'visibility' => 'public',
         ],
         'documento' => [
@@ -105,6 +111,7 @@ return [
         public_path('storage') => storage_path('app/public'),
         public_path('solicitudes') => storage_path('app/solicitudes'),
         public_path('documento') => storage_path('app/documento'),
+        public_path('ordenesCompra') => storage_path('app/ordenesCompra')
     ],
 
 ];

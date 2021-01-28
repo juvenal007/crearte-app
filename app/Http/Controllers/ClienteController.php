@@ -77,9 +77,11 @@ class ClienteController extends Controller
             DB::beginTransaction();
 
             $estado = Estado::where('estado', 'CLIENTE_ACTIVO')->first();
-
+            $rut = substr($request->data['cliente_rut'], 0, -1);
+            $rut = str_replace(".", "",$rut);
+            $rut = str_replace("-", "",$rut);
             $data = [
-                'cliente_rut' => $request->data['cliente_rut'],
+                'cliente_rut' => $rut,
                 'cliente_dv' => $request->data['cliente_dv'],
                 'cliente_nombre' => $request->data['cliente_nombre'],
                 'cliente_apellido_paterno' => $request->data['cliente_apellido_paterno'],
