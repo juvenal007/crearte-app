@@ -6,6 +6,7 @@ use App\Models\Cliente;
 use App\Models\DetalleSolicitud;
 use App\Models\Estado;
 use App\Models\Proyecto;
+use App\Models\Solicitud;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -58,6 +59,8 @@ class ClienteController extends Controller
         return response()->json(['response' => ['status' => true, 'data' => $clientes, 'message' => 'Query success']], 200);
     }
 
+
+
     public function add(Request $request)
     {
         try {
@@ -82,13 +85,13 @@ class ClienteController extends Controller
             $rut = str_replace("-", "",$rut);
             $data = [
                 'cliente_rut' => $rut,
-                'cliente_dv' => $request->data['cliente_dv'],
-                'cliente_nombre' => $request->data['cliente_nombre'],
-                'cliente_apellido_paterno' => $request->data['cliente_apellido_paterno'],
-                'cliente_apellido_materno' => $request->data['cliente_apellido_materno'],
-                'cliente_telefono' => $request->data['cliente_telefono'],
-                'cliente_direccion' => $request->data['cliente_direccion'],
-                'cliente_genero' => $request->data['cliente_genero'],
+                'cliente_dv' => strtoupper($request->data['cliente_dv']),
+                'cliente_nombre' => strtoupper($request->data['cliente_nombre']),
+                'cliente_apellido_paterno' => strtoupper($request->data['cliente_apellido_paterno']),
+                'cliente_apellido_materno' => strtoupper($request->data['cliente_apellido_materno']),
+                'cliente_telefono' => strtoupper($request->data['cliente_telefono']),
+                'cliente_direccion' => strtoupper($request->data['cliente_direccion']),
+                'cliente_genero' => strtoupper($request->data['cliente_genero']),
                 'cliente_proyecto_id' => $request->data['cliente_proyecto_id'],
                 'cliente_estado_id' => $estado->id
             ];
@@ -132,13 +135,16 @@ class ClienteController extends Controller
                 return response()->json(['response' => ['type_error' => 'validation_error', 'status' => false, 'data' => $validar->errors(), 'message' => 'Validation errors']], 200);
             }
             $cliente = Cliente::find($id);
-            $cliente->rut = $request->data['cliente_rut'];
-            $cliente->nombre = $request->data['cliente_nombre'];
-            $cliente->apellido_paterno = $request->data['cliente_apellido_paterno'];
-            $cliente->apellido_materno = $request->data['cliente_apellido_materno'];
-            $cliente->telefono = $request->data['cliente_telefono'];
-            $cliente->direccion = $request->data['cliente_direccion'];
-            $cliente->genero = $request->data['cliente_genero'];
+            $rut = substr($request->data['cliente_rut'], 0, -1);
+            $rut = str_replace(".", "",$rut);
+            $rut = str_replace("-", "",$rut);
+            $cliente->cliente_rut = $rut;
+            $cliente->cliente_nombre = strtoupper($request->data['cliente_nombre']);
+            $cliente->cliente_apellido_paterno = strtoupper($request->data['cliente_apellido_paterno']);
+            $cliente->cliente_apellido_materno = strtoupper($request->data['cliente_apellido_materno']);
+            $cliente->cliente_telefono = strtoupper($request->data['cliente_telefono']);
+            $cliente->cliente_direccion = strtoupper($request->data['cliente_direccion']);
+            $cliente->cliente_genero = strtoupper($request->data['cliente_genero']);
             $cliente->save();
 
             return response()->json(['response' => ['status' => true, 'data' => $cliente, 'message' => 'Cliente Actualizado']], 200);
@@ -150,7 +156,7 @@ class ClienteController extends Controller
     public function details($id)
     {
         try {
-            $cliente = Cliente::where('id', $id)->get();
+            $cliente = Cliente::find( $id);
             return response()->json(['response' => ['status' => true, 'data' => $cliente, 'message' => 'Query success']], 200);
         } catch (\Illuminate\Database\QueryException $e) {
             return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 500);
@@ -186,17 +192,23 @@ class ClienteController extends Controller
     public function delete($id)
     {
         try {
-            $cliente = Proyecto::where('proyecto_cliente_id', $id)->get();
+            $cliente = Cliente::with('proyecto', 'proyecto.centro_costo')->find($id);
 
-            if (!$cliente) {
+            $detalle_solicitud = DetalleSolicitud::where('ds_proyecto_id', $cliente->cliente_proyecto_id)
+            ->where('ds_cliente_id', $cliente->id)
+            ->where('ds_centro_costo_id', $cliente->proyecto->centro_costo->id)
+            ->first();
+
+            $solicitud = Solicitud::where('solicitud_detalle_solicitud_id', $detalle_solicitud->id)->get();
+
+            if (!isset($cliente)) {
                 return response()->json(['response' => ['type_error' => 'entity_not_found', 'status' => false, 'data' => [], 'message' => 'Cliente consultado no existe']], 400);
             }
 
-            if ($cliente->count() > 0) {
-                return response()->json(['response' => ['type_error' => 'not_allowed', 'status' => false, 'data' => [], 'message' => "No es posible eliminar el Cliente " . $cliente[0]['nombre'] . " ya que tiene Proyectos asociadas"]], 200);
+            if ($solicitud->count() > 0) {
+                return response()->json(['response' => ['type_error' => 'not_allowed', 'status' => false, 'data' => [], 'message' => "No es posible eliminar el Cliente " . $cliente['cliente_nombre'] . " ya que tiene Solicitudes asociadas"]], 200);
             }
 
-            $cliente = Cliente::where('id', $id);
             $cliente->delete();
 
             return response()->json(['response' => ['status' => true, 'data' => $cliente, 'message' => 'Cliente Eliminado']], 200);

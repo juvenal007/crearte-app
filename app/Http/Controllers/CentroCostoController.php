@@ -14,7 +14,7 @@ use App\Models\DetalleSolicitud;
 use App\Models\Estado;
 use App\Models\Proyecto;
 use App\Repositories\Factory\CentroCostoRepo;
-
+use Illuminate\Support\Facades\Validator;
 
 
 class CentroCostoController extends Controller
@@ -100,13 +100,14 @@ class CentroCostoController extends Controller
     public function edit(Request $request, $id)
     {
         try {
-            $validar = CentroCostoValidate::validateAdd($request);
-            if (!$validar->getData()->response->status) {
-                return json_encode($validar->getData());
-            }
+            $validar = Validator::make($request->data, [
+                'cc_nombre' => 'required|max:100|min:2',
+                'cc_direccion' => 'required|max:200|min:2'
+            ], CentroCostoController::MESSAGES, CentroCostoController::CUSTOM_ATTRIBUTES);
+
             $centroCosto = CentroCosto::find($id);
-            $centroCosto->nombre = strtoupper($request->data['cc_nombre']);
-            $centroCosto->direccion = strtoupper($request->data['cc_direccion']);
+            $centroCosto->cc_nombre = strtoupper($request->data['cc_nombre']);
+            $centroCosto->cc_direccion = strtoupper($request->data['cc_direccion']);
             $centroCosto->save();
 
             return response()->json(['response' => ['status' => true, 'data' => $centroCosto, 'message' => 'Centro de Costos Actualizado']], 200);
@@ -124,17 +125,17 @@ class CentroCostoController extends Controller
     public function delete($id)
     {
         try {
-            $centro_costos = Proyecto::where('centro_costo_id', $id)->get();
+            $centro_costos = CentroCosto::find($id);
+            $proyecto = Proyecto::where('proyecto_centro_costo_id', $id)->get();
 
-            if (!$centro_costos) {
+            if (!isset($centro_costos)) {
                 return response()->json(['response' => ['type_error' => 'entity_not_found', 'status' => false, 'data' => [], 'message' => 'Centro de Costo consultado no existe']], 400);
             }
 
-            if ($centro_costos->count() > 0) {
-                return response()->json(['response' => ['type_error' => 'not_allowed', 'status' => false, 'data' => [], 'message' => "No es posible eliminar el Centro de Costo " . $centro_costos[0]['nombre'] . " ya que tiene proyectos asociados"]], 200);
+            if ($proyecto->count() > 0) {
+                return response()->json(['response' => ['type_error' => 'not_allowed', 'status' => false, 'data' => [], 'message' => "No es posible eliminar el Centro de Costo " . $centro_costos['cc_nombre'] . " ya que tiene proyectos asociados"]], 200);
             }
 
-            $centro_costos = CentroCosto::where('id', $id);
             $centro_costos->delete();
 
             return response()->json(['response' => ['status' => true, 'data' => $centro_costos, 'message' => 'Centro de Costo Eliminado']], 200);

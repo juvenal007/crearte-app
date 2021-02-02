@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cliente;
 use App\Models\DetalleSolicitud;
 use App\Models\Estado;
 use App\Models\Proyecto;
@@ -67,10 +68,10 @@ class ProyectoController extends Controller
             $estado = Estado::where('estado', 'PROYECTO_ACTIVO')->first();
 
             $data = [
-                'proyecto_nombre' => $request->data['proyecto_nombre'],
-                'proyecto_direccion' => $request->data['proyecto_direccion'],
-                'proyecto_descripcion' => $request->data['proyecto_descripcion'],
-                'proyecto_telefono_ad' => $request->data['proyecto_telefono_ad'],
+                'proyecto_nombre' => strtoupper($request->data['proyecto_nombre']),
+                'proyecto_direccion' => strtoupper($request->data['proyecto_direccion']),
+                'proyecto_descripcion' => strtoupper($request->data['proyecto_descripcion']),
+                'proyecto_telefono_ad' => strtoupper($request->data['proyecto_telefono_ad']),
                 'proyecto_centro_costo_id' => $centro_costo_id,
                 'proyecto_estado_id' => $estado->id
             ];
@@ -103,20 +104,20 @@ class ProyectoController extends Controller
     {
         try {
             $validar = Validator::make($request->data, [
-                'nombre' => 'required|max:45|min:2',
-                'direccion' => 'required|max:50|min:2',
-                'descripcion' => 'required|max:50|min:2',
-                'telefono_ad' => 'required|max:15|min:8',
+                'proyecto_nombre' => 'required|max:100|min:2',
+                'proyecto_direccion' => 'required|max:250|min:2',
+                'proyecto_descripcion' => 'required|max:250|min:2',
+                'proyecto_telefono_ad' => 'max:16|min:6',
             ], ProyectoController::MESSAGES, ProyectoController::CUSTOM_ATTRIBUTES);
             if ($validar->fails()) {
                 return response()->json(['response' => ['type_error' => 'validation_error', 'status' => false, 'data' => $validar->errors(), 'message' => 'Validation errors']], 200);
             }
 
             $proyecto = Proyecto::find($id);
-            $proyecto->nombre = $request->data['nombre'];
-            $proyecto->direccion = $request->data['direccion'];
-            $proyecto->descripcion = $request->data['descripcion'];
-            $proyecto->telefono_ad = $request->data['telefono_ad'];
+            $proyecto->proyecto_nombre = strtoupper($request->data['proyecto_nombre']);
+            $proyecto->proyecto_direccion = strtoupper($request->data['proyecto_direccion']);
+            $proyecto->proyecto_descripcion = strtoupper($request->data['proyecto_descripcion']);
+            $proyecto->proyecto_telefono_ad = strtoupper($request->data['proyecto_telefono_ad']);
             $proyecto->save();
 
             //DEVELOP BRANCH
@@ -154,20 +155,20 @@ class ProyectoController extends Controller
     public function delete($id)
     {
         try {
-            $proyectos = Solicitud::where('proyectos_id', $id)->get();
 
-            if (!$proyectos) {
+            $proyecto = Proyecto::find($id);
+            $clientes = Cliente::where('cliente_proyecto_id', $id)->get();
+            
+            if (!isset($proyecto)) {
                 return response()->json(['response' => ['type_error' => 'entity_not_found', 'status' => false, 'data' => [], 'message' => 'Proyecto consultado no existe']], 400);
             }
 
-            if ($proyectos->count() > 0) {
-                return response()->json(['response' => ['type_error' => 'not_allowed', 'status' => false, 'data' => [], 'message' => "No es posible eliminar el Proyecto " . $proyectos[0]['nombre'] . " ya que tiene Solicitudes asociadas"]], 200);
+            if ($clientes->count() > 0) {
+                return response()->json(['response' => ['type_error' => 'not_allowed', 'status' => false, 'data' => [], 'message' => "No es posible eliminar el Proyecto " . $proyecto['proyecto_nombre'] . " ya que tiene Clientes asociados"]], 200);
             }
+            $proyecto->delete();
 
-            $proyectos = Proyecto::where('id', $id);
-            $proyectos->delete();
-
-            return response()->json(['response' => ['status' => true, 'data' => $proyectos, 'message' => 'Proyecto Eliminado']], 200);
+            return response()->json(['response' => ['status' => true, 'data' => $proyecto, 'message' => 'Proyecto Eliminado']], 200);
         } catch (\Illuminate\Database\QueryException $e) {
             return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 200);
         }

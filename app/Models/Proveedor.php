@@ -21,7 +21,7 @@ class Proveedor extends Model
     //ATRIBUTOS DE LA TABLE
     protected $fillable = [
         'proveedor_rut',
-        'proveedor_dv',
+        /* 'proveedor_dv', */
         'proveedor_nombre',
         'proveedor_apellido_paterno',
         'proveedor_apellido_materno',

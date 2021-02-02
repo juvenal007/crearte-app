@@ -46,7 +46,7 @@ class ProveedorController extends Controller
                 'proveedor_giro' => 'required|max:50|min:2',
                 'proveedor_ciudad' => 'required|max:50|min:2',
                 'proveedor_email' => 'required|max:50|min:2',
-                
+
             ], ProveedorController::MESSAGES, ProveedorController::CUSTOM_ATTRIBUTES);
             if ($validar->fails()) {
                 return response()->json(['response' => ['type_error' => 'validation_error', 'status' => false, 'data' => $validar->errors(), 'message' => 'Validation errors']], 200);
@@ -54,7 +54,7 @@ class ProveedorController extends Controller
 
             $proveedor = new Proveedor($request->data);
             $proveedor->save();
-            
+
 
             return response()->json(['response' => ['status' => true, 'data' => $proveedor, 'message' => 'Proveedor Creado']], 200);
         } catch (\Illuminate\Database\QueryException $e) {
@@ -91,8 +91,8 @@ class ProveedorController extends Controller
             $proyecto->proveedor_razon_social = $request->data['proveedor_razon_social'];
             $proyecto->proveedor_giro = $request->data['proveedor_giro'];
             $proyecto->proveedor_ciudad = $request->data['proveedor_ciudad'];
-            $proyecto->proveedor_email = $request->data['proveedor_email'];        
-            $proyecto->save();          
+            $proyecto->proveedor_email = $request->data['proveedor_email'];
+            $proyecto->save();
 
 
             return response()->json(['response' => ['status' => true, 'data' => $proyecto, 'message' => 'Proveedor Actualizado']], 200);
@@ -103,9 +103,10 @@ class ProveedorController extends Controller
     public function delete($id)
     {
         try {
-            $proveedor = Producto::where('proveedors_id', $id)->get();
+            $proveedor = Proveedor::find($id);
+            $producto = Producto::where('proveedors_id', $id)->get();
 
-            if (!$proveedor) {
+            if (isset($producto)) {
                 return response()->json(['response' => ['type_error' => 'entity_not_found', 'status' => false, 'data' => [], 'message' => 'Proveedor consultado no existe']], 400);
             }
 
@@ -123,6 +124,6 @@ class ProveedorController extends Controller
     }
 
 
-  
+
 }
 

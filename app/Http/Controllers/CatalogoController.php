@@ -48,12 +48,25 @@ class CatalogoController extends Controller
         return response()->json(['response' => ['status' => true, 'data' => $catalogos, 'message' => 'Query success']], 200);
     }
 
+    public function details_unico($id)
+    {
+        try{
+            $catalogo = Catalogo::with('unidad')->find($id);
+            if (!isset($catalogo)) {
+                return response()->json(['response' => ['type_error' => 'entity_not_found', 'status' => false, 'data' => [], 'message' => 'Catalogo consultado no existe']], 400);
+            }
+            return response()->json(['response' => ['status' => true, 'data' => $catalogo, 'message' => 'Query success']], 200);
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 500);
+        }
+    }
+
     public function add(Request $request)
     {
         try {
             $validar = Validator::make($request->data, [
-                'catalogo_material' => 'required|max:45|min:2',
-                'catalogo_descripcion' => 'required|max:50|min:2',
+                'catalogo_material' => 'required|unique:catalogos|max:100|min:2',
+                'catalogo_descripcion' => 'required|max:200|min:2',
 
             ], CatalogoController::MESSAGES, CatalogoController::CUSTOM_ATTRIBUTES);
             if ($validar->fails()) {
@@ -79,19 +92,19 @@ class CatalogoController extends Controller
             $validar = Validator::make($request->data, [
                 'catalogo_material' => 'required|max:45|min:2',
                 'catalogo_descripcion' => 'required|max:50|min:2',
-                'catalogo_unidad' => 'required|max:50|min:2',
+                'catalogo_unidad_id' => 'required|max:50|min:1',
             ], CatalogoController::MESSAGES, CatalogoController::CUSTOM_ATTRIBUTES);
             if ($validar->fails()) {
                 return response()->json(['response' => ['type_error' => 'validation_error', 'status' => false, 'data' => $validar->errors(), 'message' => 'Validation errors']], 200);
             }
 
             $catalogo = Catalogo::find($id);
+            $unidad = Unidad::find(intval($request->data['catalogo_unidad_id'], 10));
             $catalogo->catalogo_material = strtoupper($request->data['catalogo_material']);
             $catalogo->catalogo_descripcion = strtoupper($request->data['catalogo_descripcion']);
-            $catalogo->catalogo_unidad = strtoupper($request->data['catalogo_unidad']);
+            $catalogo->catalogo_unidad_id = $unidad->id;
             $catalogo->save();
 
-            //DEVELOP BRANCH
 
 
             return response()->json(['response' => ['status' => true, 'data' => $catalogo, 'message' => 'Catalogo Actualizado']], 200);
@@ -104,7 +117,7 @@ class CatalogoController extends Controller
     public function delete($id)
     {
         try {
-            $catalogo = SolicitudCatalogo::where('catalogos_id', $id)->get();
+            $catalogo = SolicitudCatalogo::where('sc_catalogo_id', $id)->get();
 
             if (!$catalogo) {
                 return response()->json(['response' => ['type_error' => 'entity_not_found', 'status' => false, 'data' => [], 'message' => 'Catalogo consultado no existe']], 400);

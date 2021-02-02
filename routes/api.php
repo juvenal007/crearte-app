@@ -98,6 +98,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     // CATALOGOS
     Route::get('/catalogo/list/', [CatalogoController::class, 'list']);
     Route::get('/catalogo/details/{id}', [CatalogoController::class, 'details']);
+    Route::get('/catalogo/details_unico/{id}', [CatalogoController::class, 'details_unico']);
     Route::post('/catalogo/store/', [CatalogoController::class, 'add']);
     Route::put('/catalogo/update/{id}', [CatalogoController::class, 'edit']);
     Route::delete('/catalogo/delete/{id}', [CatalogoController::class, 'delete']);
