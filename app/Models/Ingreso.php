@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Producto extends Model
+class Ingreso extends Model
 {
     use HasFactory, SoftDeletes;
 
     //DEFINIMOS EL NOMBRE DE LA TABLA
-    protected $table = 'productos';
+    protected $table = 'ingresos';
     //DEFINIMOS LA CLAVE PRIMARIA DE LA TABLA, AUTOMATICAMENTE SE LE ASIGNA AUTO INCREMENT
     protected $primaryKey = 'id';
 
@@ -20,33 +20,28 @@ class Producto extends Model
 
     //ATRIBUTOS DE LA TABLE
     protected $fillable = [
-        'producto_material',
-        'producto_descripcion',
-        'producto_precio',
-        'producto_unidad_id',
-        'producto_proveedor_id'
+        'ingreso_oc_id',
+        'ingreso_bodega_id',
+        'ingreso_ds_id'      
     ];
 
-        //RELACIÓN DIRECTA HACIA PROVEEDOR
-        public function proveedor()
+        //RELACIÓN INVERSA HACIA CATALOGO
+        public function orden_compra()
         {
-            return $this->belongsTo('App\Models\Proveedor', 'producto_proveedor_id');
+            return $this->belongsTo('App\Models\OrdenCompra', 'ingreso_oc_id');
         }
-        public function unidad()
+        public function bodega()
         {
-            return $this->belongsTo('App\Models\Unidad', 'producto_unidad_id');
+            return $this->belongsTo('App\Models\Bodega', 'ingreso_bodega_id');
         }
-        public function cotizacion_productos()
+        public function detalle_solicitud()
         {
-            return $this->hasMany('App\Models\CotizacionProducto');
+            return $this->belongsTo('App\Models\DetalleSolicitud', 'ingreso_ds_id');
         }
         public function bodega_productos()
         {
             return $this->hasMany('App\Models\BodegaProducto');
         }
-
-
-
 
 
 

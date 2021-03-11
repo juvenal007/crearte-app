@@ -253,7 +253,8 @@
                     <tr>
                         <td class="tg-0pky" colspan="3"
                             style="font-weight: bold; color:red; font-size: 18px; border-left: solid 2px; border-right: solid 2px; border-color: red;">
-                            <center>{{ $data['carro']['cotizacion']['cotizacion_codigo'] }}</center>
+                            <center>N° {{ $data['carro']['orden_compra']['id'] }}</center>
+                           <!--  <center>N° Cotización : {{ $data['carro']['cotizacion']['cotizacion_codigo'] }}</center> -->
                         </td>
                     </tr>
                     <tr>
@@ -327,6 +328,14 @@
             </span>
             <table width="50%" class="ti">
                 <tbody width="50%">
+                    <tr>
+                        <td width="50%">
+                            <span class="bold">N° Cotización:</span>
+                        </td>
+                        <td width="50%">
+                            <span>{{ $data['carro']['cotizacion']['cotizacion_codigo'] }}</span>
+                        </td>
+                    </tr>
                     <tr>
                         <td width="50%">
                             <span class="bold">Tipo Solicitud:</span>

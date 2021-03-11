@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Cotizacion;
 use App\Models\CotizacionProducto;
 use App\Models\Estado;
+use App\Models\OrdenCompra;
 use App\Models\Producto;
 use App\Models\Proveedor;
 use App\Models\Solicitud;
@@ -29,7 +30,7 @@ class CotizacionController extends Controller
         Storage::disk('ordenesCompra')->put($final_name, $pdf->output());
 
         $url = "http://localhost:8000/ordenesCompra/" . $final_name;
-       /*  $url = Storage::url($final_name); */
+        /*  $url = Storage::url($final_name); */
 
         return $url;
     }
@@ -100,22 +101,41 @@ class CotizacionController extends Controller
             $datos_solicitud_producto = CotizacionProducto::with('producto', 'producto.unidad')->where('cp_cotizacion_id', $cotizacion->id)->get();
             /* $proveedor = Proveedor::find($cotizacion->cotizacion_proveedor_id); */
             $solicitud = Solicitud::with('tipo_solicitud')->where('id', $request->data['cotizacion_solicitud_id'])->first();
+
+            $estadoSolicitud = Estado::where('estado', 'SOLICITUD_TERMINADA')->first();
+            $solicitud->solicitud_estado_id = $estadoSolicitud->id;
+            $solicitud->save();
+
             $cotizacion = Cotizacion::with('proveedor')->find($cotizacion->id);
             // FECHA INGRESO O GENERADA?
             $fecha = date("d/m/Y H:i:s");
+
+            $estadoOrdenCompra = Estado::where('estado', 'ORDEN_ACTIVA')->first();
+
+            $datosOrdenCompra = [
+                'oc_guia_despacho' => $cotizacion->cotizacion_codigo,
+                'oc_cotizacion_id' => $cotizacion->id,
+                'oc_estado_id' => $estadoOrdenCompra->id
+            ];
+
+            $ordenCompra = new OrdenCompra($datosOrdenCompra);
+            $ordenCompra->save();
 
             $datosPdf = [
                 'carro' => [
                     'estado' => $estado,
                     'datos_producto' => $datos_solicitud_producto,
+                    'orden_compra' => $ordenCompra,
                     'solicitud' => $solicitud,
                     'cotizacion' => $cotizacion,
                     'fecha' => $fecha,
-                    'neto' => number_format($cotizacion['cotizacion_neto'],NULL, ",", "."),
-                    'iva' => number_format($cotizacion['cotizacion_iva'],NULL, ",", "."),
-                    'total' => number_format($cotizacion['cotizacion_total'],NULL, ",", "."),
+                    'neto' => number_format($cotizacion['cotizacion_neto'], NULL, ",", "."),
+                    'iva' => number_format($cotizacion['cotizacion_iva'], NULL, ",", "."),
+                    'total' => number_format($cotizacion['cotizacion_total'], NULL, ",", "."),
                 ]
             ];
+
+
 
             $url = $this->generatePDF($datosPdf);
             DB::commit();
@@ -123,6 +143,16 @@ class CotizacionController extends Controller
             return response()->json(['response' => ['status' => true, 'data' => ['cotizacion' => $datosPdf, 'pdf' => $url], 'message' => 'Orden de compra generada.']], 200);
         } catch (\Illuminate\Database\QueryException $error) {
             DB::rollback();
+            return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $error, 'message' => 'Error processing']], 500);
+        }
+    }
+
+    public function details($id)
+    {
+        try {
+            $cotizacion = Cotizacion::find($id);
+            return response()->json(['response' => ['status' => true, 'data' => $cotizacion, 'message' => 'Cotización']], 200);
+        } catch (\Illuminate\Database\QueryException $error) {
             return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $error, 'message' => 'Error processing']], 500);
         }
     }

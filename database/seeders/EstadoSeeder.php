@@ -75,6 +75,14 @@ class EstadoSeeder extends Seeder
                 'estado' => 'COTIZACION_TERMINADA',
                 'estado_descripcion' => 'TERMINADA'
             ],
+            [
+                'estado' => 'ORDEN_ACTIVA',
+                'estado_descripcion' => 'ACTIVA'
+            ],
+            [
+                'estado' => 'ORDEN_TERMINADA',
+                'estado_descripcion' => 'TERMINADA'
+            ],
         ]
         );
     }

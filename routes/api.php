@@ -6,6 +6,8 @@ use App\Http\Controllers\CentroCostoController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\CotizacionController;
 use App\Http\Controllers\EstadoController;
+use App\Http\Controllers\IngresoController;
+use App\Http\Controllers\OrdenCompraController;
 use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProveedorController;
@@ -57,7 +59,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     // PROVEEDORES
     Route::get('/proveedor/list', [ProveedorController::class, 'list']);
-    Route::get('/proveedor/details/{id}', [CProveedorontroller::class, 'details']);
+    Route::get('/proveedor/details/{id}', [ProveedorController::class, 'details']);
     Route::post('/proveedor/store', [ProveedorController::class, 'add']);
     Route::put('/proveedor/update/{id}', [ProveedorController::class, 'edit']);
     Route::delete('/proveedor/delete/{id}', [ProveedorController::class, 'delete']);
@@ -142,5 +144,24 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::delete('/cotizacion/delete/{id}', [CotizacionController::class, 'delete']);
     Route::get('/cotizacion/pluck', [CotizacionController::class, 'pluck']);
 
-    //SOME
+    // ORDEN COMPRA
+    Route::get('/orden-compra/list/', [OrdenCompraController::class, 'list']);
+    Route::get('/orden-compra/list/all', [OrdenCompraController::class, 'all']);
+    Route::get('/orden-compra/list/all_activa', [OrdenCompraController::class, 'all_activa']);
+    Route::get('/orden-compra/list/all_terminada', [OrdenCompraController::class, 'all_terminada']);
+    Route::get('/orden-compra/details/{id}', [OrdenCompraController::class, 'details']);
+    Route::get('/orden-compra/details_carro/{id}', [OrdenCompraController::class, 'details_carro']);
+    Route::post('/orden-compra/store/', [OrdenCompraController::class, 'add']);
+    Route::put('/orden-compra/update/{id}', [OrdenCompraController::class, 'edit']);
+    Route::delete('/orden-compra/delete/{id}', [OrdenCompraController::class, 'delete']);
+    Route::get('/orden-compra/pluck', [OrdenCompraController::class, 'pluck']);
+
+    // INGRESO
+    Route::get('/ingreso/list/', [IngresoController::class, 'list']);
+    Route::get('/ingreso/list/all', [IngresoController::class, 'all']);
+    Route::get('/ingreso/details/{id}', [IngresoController::class, 'details']);
+    Route::post('/ingreso/store/', [IngresoController::class, 'add']);
+    Route::put('/ingreso/update/{id}', [IngresoController::class, 'edit']);
+    Route::delete('/ingreso/delete/{id}', [nController::class, 'delete']);
+    Route::get('/ingreso/pluck', [IngresoController::class, 'pluck']);
 });

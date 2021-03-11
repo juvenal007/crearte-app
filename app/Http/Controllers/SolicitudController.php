@@ -42,7 +42,7 @@ class SolicitudController extends Controller
 
     public function list()
     {
-        $solicituds = DB::table('solicituds')->get();
+        $solicituds = Solicitud::where('estado', 'SOLICITUD_ACTIVA')->get();
         return response()->json(['response' => ['status' => true, 'data' => $solicituds, 'message' => 'Query success']], 200);
     }
     public function all_activa()
