@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BodegaProductoController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\CentroCostoController;
 use App\Http\Controllers\ClienteController;
@@ -12,9 +13,12 @@ use App\Http\Controllers\PDFController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\ProyectoController;
+use App\Http\Controllers\SalidaController;
+use App\Http\Controllers\SalidaProductoController;
 use App\Http\Controllers\SolicitudController;
 use App\Http\Controllers\TipoSolicitudController;
 use App\Http\Controllers\UnidadController;
+use App\Models\BodegaProducto;
 use App\Models\Solicitud;
 use Illuminate\Support\Facades\Route;
 
@@ -46,6 +50,28 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     // ESTADOS
     Route::get('/estado/list', [EstadoController::class, 'list']);
+
+    // SALIDA PRODUCTOS
+    Route::get('/salida-producto/list/{idCliente}', [SalidaProductoController::class, 'list']);
+
+
+
+    // EGRESO
+    Route::get('/salida/list', [SalidaController::class, 'list']);    
+    Route::get('/salida/details/{id}', [SalidaController::class, 'details']);
+    Route::post('/salida/store', [SalidaController::class, 'add']);
+    Route::put('/salida/update/{id}', [SalidaController::class, 'edit']);
+    Route::delete('/salida/delete/{id}', [SalidaController::class, 'delete']);
+    Route::get('/salida/pluck', [SalidaController::class, 'pluck']);
+    
+    //BODEGA PRODUCTOS
+    Route::get('/bodega-producto/list_all', [BodegaProductoController::class, 'list_all']);
+    Route::get('/bodega-producto/producto-bodega/{idCliente}', [BodegaProductoController::class, 'getProductosBodega']);
+    Route::get('/bodega-producto/details/{id}', [BodegaProductoController::class, 'details']);
+    Route::post('/bodega-producto/store', [BodegaProductoController::class, 'add']);
+    Route::put('/bodega-producto/update/{id}', [BodegaProductoController::class, 'edit']);
+    Route::delete('/bodega-producto/delete/{id}', [BodegaProductoController::class, 'delete']);
+    Route::get('/bodega-producto/pluck', [BodegaProductoController::class, 'pluck']);
 
     // CENTRO DE COSTOS
     Route::get('/centro-costo/list', [CentroCostoController::class, 'list']);
@@ -90,6 +116,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     // PRODUCTOS
     Route::get('/producto/list/', [ProductoController::class, 'list']);
+    Route::get('/producto/list_all/', [ProductoController::class, 'list_all']);
     Route::get('/producto/details/{id}', [ProductoController::class, 'details']);
     Route::get('/producto/proyecto_details/{id}', [ProductoController::class, 'proyecto_details']);
     Route::post('/producto/store/', [ProductoController::class, 'add']);

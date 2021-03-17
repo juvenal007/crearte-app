@@ -66,14 +66,14 @@ class ProveedorController extends Controller
     {
         try {
             $validar = Validator::make($request->data, [
-                'proveedor_rut' => 'required|max:45|min:2',
-                'proveedor_nombre' => 'required|max:45|min:2',
-                'proveedor_apellido_paterno' => 'max:50|min:2',
-                'proveedor_apellido_materno' => 'max:50|min:2',
-                'proveedor_direccion' => 'required|max:50|min:2',
+                'proveedor_rut' => 'required|max:20|min:2',
+                'proveedor_nombre' => 'required|max:100|min:2',
+                'proveedor_apellido_paterno' => 'max:100|min:2',
+                'proveedor_apellido_materno' => 'max:100|min:2',
+                'proveedor_direccion' => 'required|max:100|min:2',
                 'proveedor_telefono' => 'required|max:50|min:2',
-                'proveedor_razon_social' => 'required|max:50|min:2',
-                'proveedor_giro' => 'required|max:50|min:2',
+                'proveedor_razon_social' => 'required|max:200|min:2',
+                'proveedor_giro' => 'required|max:100|min:2',
                 'proveedor_ciudad' => 'max:50|min:2',
                 'proveedor_email' => 'max:50|min:2',
             ], ProveedorController::MESSAGES, ProveedorController::CUSTOM_ATTRIBUTES);
@@ -83,15 +83,15 @@ class ProveedorController extends Controller
 
             $proyecto = Proveedor::find($id);
             $proyecto->proveedor_rut = $request->data['proveedor_rut'];
-            $proyecto->proveedor_nombre = $request->data['proveedor_nombre'];
-            $proyecto->proveedor_apellido_paterno = $request->data['proveedor_apellido_paterno'];
-            $proyecto->proveedor_apellido_materno = $request->data['proveedor_apellido_materno'];
-            $proyecto->proveedor_direccion = $request->data['proveedor_direccion'];
+            $proyecto->proveedor_nombre = strtoupper($request->data['proveedor_nombre']);
+            $proyecto->proveedor_apellido_paterno = strtoupper($request->data['proveedor_apellido_paterno']);
+            $proyecto->proveedor_apellido_materno = strtoupper($request->data['proveedor_apellido_materno']);
+            $proyecto->proveedor_direccion = strtoupper($request->data['proveedor_direccion']);
             $proyecto->proveedor_telefono = $request->data['proveedor_telefono'];
-            $proyecto->proveedor_razon_social = $request->data['proveedor_razon_social'];
-            $proyecto->proveedor_giro = $request->data['proveedor_giro'];
-            $proyecto->proveedor_ciudad = $request->data['proveedor_ciudad'];
-            $proyecto->proveedor_email = $request->data['proveedor_email'];
+            $proyecto->proveedor_razon_social = strtoupper($request->data['proveedor_razon_social']);
+            $proyecto->proveedor_giro = strtoupper($request->data['proveedor_giro']);
+            $proyecto->proveedor_ciudad = strtoupper($request->data['proveedor_ciudad']);
+            $proyecto->proveedor_email = strtoupper($request->data['proveedor_email']);
             $proyecto->save();
 
 

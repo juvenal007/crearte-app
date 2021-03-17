@@ -23,9 +23,9 @@ class CotizacionController extends Controller
         $pdf = PDF::loadView('ordenCompra', compact('data'), $data);
         $pdf->setPaper('letter', 'portrait');
         /* $archivo = PDF::loadHTML('<h1>hola</h1>')->setPaper('a4', 'landscape')->setWarnings(false)->save('myfile.pdf'); */
-        $filename = uniqid('orden-compra-', true) . '.';
+        $filename = uniqid('orden-compra-'.$data['carro']['orden_compra']->id, true) . '.';
         $nombre = date("Y-m-d-H-i-s");
-        $final_name = "OrdenCompra-{$nombre}.pdf";
+        $final_name = "Fecha-{$nombre}-OrdenCompra-{$data['carro']['orden_compra']->id}-Solicitud-{$data['carro']['solicitud']->id}.pdf";
 
         Storage::disk('ordenesCompra')->put($final_name, $pdf->output());
 

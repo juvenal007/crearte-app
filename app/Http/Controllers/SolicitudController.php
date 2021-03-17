@@ -62,7 +62,7 @@ class SolicitudController extends Controller
         $pdf->setPaper('letter', 'portrait');
         /* $archivo = PDF::loadHTML('<h1>hola</h1>')->setPaper('a4', 'landscape')->setWarnings(false)->save('myfile.pdf'); */
         $nombre = date("Y-m-d-H-i-s");
-        $final_name = "Solicitud-{$nombre}.pdf";
+        $final_name = "Fecha-{$nombre}-Solicitud-{$data['carro']['solicitud']->solicitud_codigo}.pdf";
 
         Storage::disk('documento')->put($final_name, $pdf->output());
 
@@ -210,15 +210,28 @@ class SolicitudController extends Controller
     public function datosSolicitud(Request $request, $ultimoId, $estado, $tipoSolicitud, $datos)
     {
         if ($ultimoId == 0) {
-            return [
-                'solicitud_codigo' => 'SO-' . crc32(1),
-                'solicitud_nombre' => $request->data['solicitud_nombre'],
-                'solicitud_descripcion' => $request->data['solicitud_descripcion'],
-                'solicitud_nombre_solicitante' => $request->data['solicitud_nombre_solicitante'],
-                'solicitud_estado_id' => $estado->id,
-                'solicitud_detalle_solicitud_id' => $datos['detalle_solicitud']->id,
-                'solicitud_tipo_solicitud_id' => $tipoSolicitud->id
-            ];
+            if($datos['detalle_solicitud'] == null){
+                return [
+                    'solicitud_codigo' => 'SO-' . crc32(1),
+                    'solicitud_nombre' => $request->data['solicitud_nombre'],
+                    'solicitud_descripcion' => $request->data['solicitud_descripcion'],
+                    'solicitud_nombre_solicitante' => $request->data['solicitud_nombre_solicitante'],
+                    'solicitud_estado_id' => $estado->id,
+                    'solicitud_detalle_solicitud_id' =>NULL,
+                    'solicitud_tipo_solicitud_id' => $tipoSolicitud->id
+                ];
+            }else{
+                return [
+                    'solicitud_codigo' => 'SO-' . crc32(1),
+                    'solicitud_nombre' => $request->data['solicitud_nombre'],
+                    'solicitud_descripcion' => $request->data['solicitud_descripcion'],
+                    'solicitud_nombre_solicitante' => $request->data['solicitud_nombre_solicitante'],
+                    'solicitud_estado_id' => $estado->id,
+                    'solicitud_detalle_solicitud_id' => $datos['detalle_solicitud']->id,
+                    'solicitud_tipo_solicitud_id' => $tipoSolicitud->id
+                ];
+            }
+           
         }
 
         if (isset($datos['detalle_solicitud'])) {

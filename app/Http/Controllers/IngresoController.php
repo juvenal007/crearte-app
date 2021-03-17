@@ -49,11 +49,11 @@ class IngresoController extends Controller
 
 
             $productosCotizacion = CotizacionProducto::where('cp_cotizacion_id', $cotizacion->id)->get();
-            
+            //return response()->json(['response' => ['status' => true, 'data' => $productosCotizacion, 'message' => 'Productos Agregados a Bodega']], 200);
             foreach ($productosCotizacion as $atributo => $producto) {
 
-                $productoBase = Producto::find($producto['id']);     
-
+                $productoBase = Producto::find($producto['cp_producto_id']);     
+                //return response()->json(['response' => ['status' => true, 'data' => $productosCotizacion, 'message' => 'Productos Agregados a Bodega']], 200);
                 $datosBodegaProducto = [
                     'bp_cantidad' => intval($producto['cp_cantidad']),
                     'bp_precio' => floatval($producto['cp_precio']),

@@ -16,7 +16,7 @@ class BodegaProducto extends Model
     protected $primaryKey = 'id';
 
     //CAMPOS QUE NO QUEREMOS QUE SE DEVUELVAN EN LAS CONSULTAS
-    protected $hidden = ['created_at','updated_at','deleted_at'];
+    protected $hidden = ['deleted_at'];
 
     //ATRIBUTOS DE LA TABLE
     protected $fillable = [
@@ -25,7 +25,9 @@ class BodegaProducto extends Model
         'bp_total',
         'bp_existencia',        
         'bp_producto_id',        
-        'bp_ingreso_id',        
+        'bp_ingreso_id', 
+        'created_at',
+        'updated_at'
     ];
 
         //RELACIÓN DIRECTA HACIA PROVEEDOR

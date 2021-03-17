@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         // DESDE LOS MANTENEDORES HACIA LAS TABLAS RELACIONADAS
         $this->call([
             UnidadSeeder::class,
+            BodegaSeeder::class,
            /*  ProveedorSeeder::class, */
            /*  CatalogoSeeder::class, */
             UserSeeder::class,
