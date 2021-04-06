@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CentroCosto;
 use App\Models\Cliente;
 use App\Models\DetalleSolicitud;
 use App\Models\Estado;
 use App\Models\Proyecto;
+use App\Models\SalidaProducto;
 use App\Models\Solicitud;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -158,7 +160,7 @@ class ProyectoController extends Controller
 
             $proyecto = Proyecto::find($id);
             $clientes = Cliente::where('cliente_proyecto_id', $id)->get();
-            
+
             if (!isset($proyecto)) {
                 return response()->json(['response' => ['type_error' => 'entity_not_found', 'status' => false, 'data' => [], 'message' => 'Proyecto consultado no existe']], 400);
             }
@@ -172,5 +174,44 @@ class ProyectoController extends Controller
         } catch (\Illuminate\Database\QueryException $e) {
             return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 200);
         }
+    }
+
+    public function costo_proyecto($idProyecto)
+    {
+        try {
+
+            $clientes = Cliente::with('proyecto')->where('cliente_proyecto_id',$idProyecto)->get();
+
+            // FALTARIA UN COUNT PARA VALIDAR
+            $detalles = [];
+            foreach ($clientes as $key => $personaConProyecto) {
+
+                $datos = [];
+
+                $detalleSolicitud = DetalleSolicitud::with('proyecto', 'cliente', 'centro_costo')->where('ds_cliente_id', $personaConProyecto->id)->where('ds_proyecto_id', $personaConProyecto['proyecto']->id)->first();
+                $salidaProducto = SalidaProducto::where('sp_detalle_solicitud_id', $detalleSolicitud->id)->sum('sp_total');
+
+
+                $datos = [
+                    'detalleSolicitud' => $detalleSolicitud,
+                    'totalCosto' => $salidaProducto
+                ];
+
+                array_push($detalles, $datos);
+            }
+
+/*             $detalle = DetalleSolicitud::where('ds_proyecto_id', $cliente[0]->id)->where('ds_centro_costo_id', $centroCosto->id)->get(); */
+            return response()->json(['response' => ['status' => true, 'data' => $detalles, 'message' => 'Proyecto Eliminado']], 200);
+
+/*             $detalle_solicitud = DetalleSolicitud::where('ds_proyecto_id', $cliente->cliente_proyecto_id)
+            ->where('ds_cliente_id', $cliente->id)
+            ->where('ds_centro_costo_id', $cliente->proyecto->centro_costo->id)
+            ->first(); */
+
+    /*         return response()->json(['response' => ['status' => true, 'data' => $proyecto, 'message' => 'Proyecto Eliminado']], 200); */
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 200);
+        }
+
     }
 }

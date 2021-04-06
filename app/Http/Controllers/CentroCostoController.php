@@ -43,6 +43,11 @@ class CentroCostoController extends Controller
     public function list()
     {
         $centro_costos = CentroCosto::all();
+
+        if ($centro_costos->count() <= 0) {
+            return response()->json(['response' => ['type_error' => 'not_allowed', 'status' => false, 'data' => [], 'message' => "No se encontraron datos"]], 404);
+        }
+
         return response()->json(['response' => ['status' => true, 'data' => $centro_costos, 'message' => 'Query success']], 200);
     }
 

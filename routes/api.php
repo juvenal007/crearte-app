@@ -54,16 +54,20 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     // SALIDA PRODUCTOS
     Route::get('/salida-producto/list/{idCliente}', [SalidaProductoController::class, 'list']);
 
+    // COSTO PROYECTO
+    Route::get('/proyecto/list/costo/{idProyecto}', [ProyectoController::class, 'costo_proyecto']);
+
+
 
 
     // EGRESO
-    Route::get('/salida/list', [SalidaController::class, 'list']);    
+    Route::get('/salida/list', [SalidaController::class, 'list']);
     Route::get('/salida/details/{id}', [SalidaController::class, 'details']);
     Route::post('/salida/store', [SalidaController::class, 'add']);
     Route::put('/salida/update/{id}', [SalidaController::class, 'edit']);
     Route::delete('/salida/delete/{id}', [SalidaController::class, 'delete']);
     Route::get('/salida/pluck', [SalidaController::class, 'pluck']);
-    
+
     //BODEGA PRODUCTOS
     Route::get('/bodega-producto/list_all', [BodegaProductoController::class, 'list_all']);
     Route::get('/bodega-producto/producto-bodega/{idCliente}', [BodegaProductoController::class, 'getProductosBodega']);
@@ -135,6 +139,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
     // SOLICITUD
     Route::get('/solicitud/list/', [SolicitudController::class, 'list']);
+    Route::get('/solicitud/list_all/', [SolicitudController::class, 'list_all']);
     Route::get('/solicitud/list/all', [SolicitudController::class, 'all']);
     Route::get('/solicitud/list/all_activa', [SolicitudController::class, 'all_activa']);
     Route::get('/solicitud/details/{id}', [SolicitudController::class, 'details']);

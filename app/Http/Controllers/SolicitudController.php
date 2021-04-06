@@ -45,6 +45,21 @@ class SolicitudController extends Controller
         $solicituds = Solicitud::where('estado', 'SOLICITUD_ACTIVA')->get();
         return response()->json(['response' => ['status' => true, 'data' => $solicituds, 'message' => 'Query success']], 200);
     }
+    public function list_all()
+    {
+        try {
+            $estado = Estado::where('estado', 'SOLICITUD_ACTIVA')->first();
+            $solicitudes = Solicitud::with('tipo_solicitud')->where('solicitud_estado_id', $estado->id)->get();
+
+            foreach ($solicitudes as $key => $solicitud) {
+                $solicitudes[$key]->solicitud_tipo_solicitud_txt = $solicitud['tipo_solicitud']->ts_nombre;
+            }
+
+            return response()->json(['response' => ['status' => true, 'data' => $solicitudes, 'message' => 'Query success']], 200);
+        } catch (\Illuminate\Database\QueryException $error) {
+            return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $error, 'message' => 'Error processing']], 500);
+        }
+    }
     public function all_activa()
     {
         try {
@@ -143,7 +158,7 @@ class SolicitudController extends Controller
     public function details_carro($id)
     {
         try {
-           /*  $solicitud = Solicitud::with('solicitud_catalogos', 'tipo_solicitud', 'estado', 'solicitud_detalle_solicitud', 'solicitud_detalle_solicitud.cliente', 'solicitud_detalle_solicitud.proyecto', 'solicitud_detalle_solicitud.centro_costo')->where('id', $id)->first(); */
+            /*  $solicitud = Solicitud::with('solicitud_catalogos', 'tipo_solicitud', 'estado', 'solicitud_detalle_solicitud', 'solicitud_detalle_solicitud.cliente', 'solicitud_detalle_solicitud.proyecto', 'solicitud_detalle_solicitud.centro_costo')->where('id', $id)->first(); */
             /* $solicitud = Solicitud::with('solicitud_catalogos')->where('id', $id)->get(); */
             $solicitud_catalogo = SolicitudCatalogo::with('solicitud', 'catalogo', 'catalogo.unidad')->where('sc_solicitud_id', $id)->get();
             return response()->json(['response' => ['status' => true, 'data' => $solicitud_catalogo, 'message' => 'Proyecto Actualizado']], 200);
@@ -210,17 +225,17 @@ class SolicitudController extends Controller
     public function datosSolicitud(Request $request, $ultimoId, $estado, $tipoSolicitud, $datos)
     {
         if ($ultimoId == 0) {
-            if($datos['detalle_solicitud'] == null){
+            if ($datos['detalle_solicitud'] == null) {
                 return [
                     'solicitud_codigo' => 'SO-' . crc32(1),
                     'solicitud_nombre' => $request->data['solicitud_nombre'],
                     'solicitud_descripcion' => $request->data['solicitud_descripcion'],
                     'solicitud_nombre_solicitante' => $request->data['solicitud_nombre_solicitante'],
                     'solicitud_estado_id' => $estado->id,
-                    'solicitud_detalle_solicitud_id' =>NULL,
+                    'solicitud_detalle_solicitud_id' => NULL,
                     'solicitud_tipo_solicitud_id' => $tipoSolicitud->id
                 ];
-            }else{
+            } else {
                 return [
                     'solicitud_codigo' => 'SO-' . crc32(1),
                     'solicitud_nombre' => $request->data['solicitud_nombre'],
@@ -231,7 +246,6 @@ class SolicitudController extends Controller
                     'solicitud_tipo_solicitud_id' => $tipoSolicitud->id
                 ];
             }
-           
         }
 
         if (isset($datos['detalle_solicitud'])) {
@@ -254,6 +268,101 @@ class SolicitudController extends Controller
                 'solicitud_detalle_solicitud_id' => NULL,
                 'solicitud_tipo_solicitud_id' => $tipoSolicitud->id
             ];
+        }
+    }
+
+    public function details($id)
+    {
+        try {
+            $estado = Estado::where('estado', 'SOLICITUD_ACTIVA')->first();
+            $solicitud = Solicitud::where('solicitud_estado_id', $estado->id)->where('id', $id)->first();
+
+            $solicitud_catalogo = SolicitudCatalogo::with('solicitud', 'catalogo', 'catalogo.unidad')->where('sc_solicitud_id', $id)->get();
+
+            $catalogoData = [];
+
+            foreach ($solicitud_catalogo as $key => $catalogo) {
+                $solicitud_catalogo[$key]->catalogo_material = $catalogo['catalogo']->catalogo_material;
+                $solicitud_catalogo[$key]->catalogo_descripcion = $catalogo['catalogo']->catalogo_descripcion;
+                $solicitud_catalogo[$key]['catalogo']->cantidad = $solicitud_catalogo[$key]->sc_cantidad;
+
+                $datosCatalogo = [
+                    'cantidad' => $solicitud_catalogo[$key]->sc_cantidad,
+                    'catalogo_descripcion' => $catalogo['catalogo']->catalogo_descripcion,
+                    'catalogo_material' => $catalogo['catalogo']->catalogo_material,
+                    'catalogo_unidad_id' => $catalogo['catalogo']->catalogo_unidad_id,
+                    'unidad' => $catalogo['catalogo']['unidad'],
+                    'id' => $catalogo['catalogo']->id
+                ];
+
+                array_push($catalogoData, $datosCatalogo);
+            }
+
+            return response()->json(['response' => ['status' => true, 'data' => ['solicitud' => $solicitud, 'catalogo' => $catalogoData], 'message' => 'Solicitud']], 200);
+        } catch (\Illuminate\Database\QueryException $error) {
+            return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $error, 'message' => 'Error processing']], 500);
+        }
+    }
+
+    public function edit($id, Request $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $carro = $request->data['carro'];
+            $solicitud = $request->data['solicitud'];
+
+            $estado = Estado::where('estado', 'SOLICITUD_ACTIVA')->first();
+            $solicitud = Solicitud::where('solicitud_estado_id', $estado->id)->where('id', $solicitud['id'])->first();
+            $catalogos = SolicitudCatalogo::where('sc_solicitud_id', $solicitud->id)->get();
+
+            foreach ($catalogos as $key => $catalogo) {
+                $catalogoData = SolicitudCatalogo::find($catalogo->id);
+                $catalogoData->delete();
+            }
+
+            foreach ($carro as $key => $producto) {
+                $catalogo = Catalogo::find($producto['id']);
+                $datosCarro = [
+                    'sc_cantidad' => (int) $producto['cantidad'],
+                    'sc_solicitud_id' => $solicitud->id,
+                    'sc_catalogo_id' => $catalogo->id
+                ];
+                $solicitud_catalogo = new SolicitudCatalogo($datosCarro);
+                $solicitud_catalogo->save();
+            }
+
+            $catalogos = SolicitudCatalogo::where('sc_solicitud_id', $solicitud->id)->get();
+
+            DB::commit();
+            return response()->json(['response' => ['status' => true, 'data' => $catalogos, 'message' => 'Solicitud Actualizada']], 200);
+        } catch (\Illuminate\Database\QueryException $error) {
+            DB::rollback();
+            return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $error, 'message' => 'Error processing']], 500);
+        }
+    }
+
+    public function delete($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $estado = Estado::where('estado', 'SOLICITUD_ACTIVA')->first();
+            $solicitud = Solicitud::where('solicitud_estado_id', $estado->id)->where('id', $id)->first();
+            $catalogos = SolicitudCatalogo::where('sc_solicitud_id', $solicitud->id)->get();
+
+            foreach ($catalogos as $key => $catalogo) {
+                $catalogoData = SolicitudCatalogo::find($catalogo->id);
+                $catalogoData->delete();
+            }
+
+            $solicitud->delete();
+
+            DB::commit();
+            return response()->json(['response' => ['status' => true, 'data' => $catalogos, 'message' => 'Solicitud Actualizada']], 200);
+        } catch (\Illuminate\Database\QueryException $error) {
+            DB::rollback();
+            return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $error, 'message' => 'Error processing']], 500);
         }
     }
 }
