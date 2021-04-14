@@ -166,10 +166,11 @@ return [
         /*
          *  THIRD PARTY
          */
-        
+
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
         Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
         Barryvdh\DomPDF\ServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
         /*
          * Package Service Providers...
          */
@@ -238,8 +239,9 @@ return [
         'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
         /*
          *  THIRD PARTY
-         */   
+         */
         'PDF' => Barryvdh\DomPDF\Facade::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
 
     ],
 

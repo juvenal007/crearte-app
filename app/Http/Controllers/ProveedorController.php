@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ProveedorsExport;
+use Maatwebsite\Excel\Facades\Excel;
+
+
 use App\Models\Producto;
 use App\Models\Proveedor;
 use Illuminate\Http\Request;
@@ -118,6 +122,21 @@ class ProveedorController extends Controller
             $proveedor->delete();
 
             return response()->json(['response' => ['status' => true, 'data' => $proveedor, 'message' => 'Proveedor Eliminado']], 200);
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 200);
+        }
+    }
+
+    public function informe($id)
+    {
+        try {
+
+            $proyecto = Proveedor::find($id);
+
+            $fecha = date("d-m-Y-H-i-s");
+            $informeProveedor = 'INFORME-PROVEEDOR-' . $proyecto->proveedor_nombre . "-" . $fecha . ".xlsx";
+         
+            return Excel::download(new ProveedorsExport($id), $informeProveedor);
         } catch (\Illuminate\Database\QueryException $e) {
             return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 200);
         }

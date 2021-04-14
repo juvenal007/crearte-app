@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ProductosExport;
 use App\Models\Producto;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductoController extends Controller
 {
@@ -23,14 +25,14 @@ class ProductoController extends Controller
         }
 
         $datosProductos = [];
-            
+
             foreach ($productos as $key => $producto) {
                 $fechaIngreso = Carbon::parse($producto->created_at)->format('d-m-Y H:i:s');
                 $fechaIngreso = Carbon::create($fechaIngreso);
-                $producto->fecha_ingreso = $fechaIngreso->format('d-m-Y H:i:s'); 
-                
-                $productoDato = [    
-                    'producto_precio' => "$ ".number_format(intval($producto->producto_precio), NULL, ",", "."),  
+                $producto->fecha_ingreso = $fechaIngreso->format('d-m-Y H:i:s');
+
+                $productoDato = [
+                    'producto_precio' => "$ ".number_format(intval($producto->producto_precio), NULL, ",", "."),
                     'producto_material' => $producto->producto_material,
                     'producto_descripcion' => $producto->producto_descripcion,
                     'producto_unidad' => $producto['unidad']->unidad_nombre,
@@ -39,7 +41,7 @@ class ProductoController extends Controller
                 ];
 
                 array_push($datosProductos, $productoDato);
-            }   
+            }
 
         return response()->json(['response' => ['status' => true, 'data' => $datosProductos, 'message' => 'Query success']], 200);
     }
@@ -50,6 +52,19 @@ class ProductoController extends Controller
             return $producto;
         } catch (\Illuminate\Database\QueryException $e) {
             return $e;
+        }
+    }
+
+    public function informe()
+    {
+        try {
+
+            $fecha = date("d-m-Y-H-i-s");
+            $informeProductos = 'INFORME-PRODUCTOS-'. $fecha . ".xlsx";
+
+            return Excel::download(new ProductosExport, $informeProductos);
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 200);
         }
     }
 }

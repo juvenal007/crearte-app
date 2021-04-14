@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BodegaController;
 use App\Http\Controllers\BodegaProductoController;
 use App\Http\Controllers\CatalogoController;
 use App\Http\Controllers\CentroCostoController;
@@ -43,6 +44,13 @@ Route::post('register', [AuthController::class, 'register']);
 Route::post('logout', [AuthController::class, 'logout']);
 
 Route::get('/generar-pdf', [SolicitudController::class, 'generatePDF']);
+
+Route::get('/cliente/informe/{id}', [ClienteController::class, 'informe']);
+Route::get('/proyecto/informe/{id}', [ProyectoController::class, 'informe']);
+Route::get('/proveedor/informe/{id}', [ProveedorController::class, 'informe']);
+Route::get('/bodega/informe/', [BodegaController::class, 'informe']);
+Route::get('/producto/informe/', [ProductoController::class, 'informe']);
+/* Route::get('/proyecto/informe/{id}', [ProyectoController::class, 'informeProyecto']); */
 
 Route::group(['middleware' => ['jwt.verify']], function () {
 
@@ -97,6 +105,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
 
 
     // PROYECTOS
+    Route::get('/proyecto/list_all/', [ProyectoController::class, 'list_all']);
     Route::get('/proyecto/list/{centro_costo_id}', [ProyectoController::class, 'list']);
     Route::get('/proyecto/list_activo/', [ProyectoController::class, 'list_activo']);
     Route::get('/proyecto/details/{id}', [ProyectoController::class, 'details']);
@@ -117,6 +126,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::put('/cliente/update/{id}', [ClienteController::class, 'edit']);
     Route::delete('/cliente/delete/{id}', [ClienteController::class, 'delete']);
     Route::get('/cliente/pluck', [ClienteController::class, 'pluck']);
+
 
     // PRODUCTOS
     Route::get('/producto/list/', [ProductoController::class, 'list']);

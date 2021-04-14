@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ProyectosExport;
+use Maatwebsite\Excel\Facades\Excel;
+
 use App\Models\CentroCosto;
 use App\Models\Cliente;
 use App\Models\DetalleSolicitud;
@@ -10,6 +13,7 @@ use App\Models\Proyecto;
 use App\Models\SalidaProducto;
 use App\Models\Solicitud;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 
@@ -34,6 +38,12 @@ class ProyectoController extends Controller
     public function list($centro_costo_id)
     {
         $proyectos = Proyecto::where('proyecto_centro_costo_id', $centro_costo_id)->get();
+        return response()->json(['response' => ['status' => true, 'data' => $proyectos, 'message' => 'Query success']], 200);
+    }
+
+    public function list_all()
+    {
+        $proyectos = Proyecto::all();
         return response()->json(['response' => ['status' => true, 'data' => $proyectos, 'message' => 'Query success']], 200);
     }
 
@@ -180,7 +190,7 @@ class ProyectoController extends Controller
     {
         try {
 
-            $clientes = Cliente::with('proyecto')->where('cliente_proyecto_id',$idProyecto)->get();
+            $clientes = Cliente::with('proyecto')->where('cliente_proyecto_id', $idProyecto)->get();
 
             // FALTARIA UN COUNT PARA VALIDAR
             $detalles = [];
@@ -200,18 +210,31 @@ class ProyectoController extends Controller
                 array_push($detalles, $datos);
             }
 
-/*             $detalle = DetalleSolicitud::where('ds_proyecto_id', $cliente[0]->id)->where('ds_centro_costo_id', $centroCosto->id)->get(); */
+            /*             $detalle = DetalleSolicitud::where('ds_proyecto_id', $cliente[0]->id)->where('ds_centro_costo_id', $centroCosto->id)->get(); */
             return response()->json(['response' => ['status' => true, 'data' => $detalles, 'message' => 'Proyecto Eliminado']], 200);
 
-/*             $detalle_solicitud = DetalleSolicitud::where('ds_proyecto_id', $cliente->cliente_proyecto_id)
+            /*             $detalle_solicitud = DetalleSolicitud::where('ds_proyecto_id', $cliente->cliente_proyecto_id)
             ->where('ds_cliente_id', $cliente->id)
             ->where('ds_centro_costo_id', $cliente->proyecto->centro_costo->id)
             ->first(); */
 
-    /*         return response()->json(['response' => ['status' => true, 'data' => $proyecto, 'message' => 'Proyecto Eliminado']], 200); */
+            /*         return response()->json(['response' => ['status' => true, 'data' => $proyecto, 'message' => 'Proyecto Eliminado']], 200); */
         } catch (\Illuminate\Database\QueryException $e) {
             return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 200);
         }
+    }
+    public function informe($id)
+    {
+        try {
 
+            $proyecto = Proyecto::find($id);
+
+            $fecha = date("d-m-Y-H-i-s");
+            $informeProyecto = 'INFORME-PROYECTO-' . $proyecto->proyecto_nombre . "-" . $fecha . ".xlsx";
+
+            return Excel::download(new ProyectosExport($id), $informeProyecto);
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 200);
+        }
     }
 }

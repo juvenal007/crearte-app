@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\Cliente;
 use App\Models\DetalleSolicitud;
 use App\Models\Estado;
 use App\Models\Proyecto;
+use App\Models\SalidaProducto;
 use App\Models\Solicitud;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+
+use App\Exports\ClientesExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ClienteController extends Controller
 {
@@ -81,8 +87,8 @@ class ClienteController extends Controller
 
             $estado = Estado::where('estado', 'CLIENTE_ACTIVO')->first();
             $rut = substr($request->data['cliente_rut'], 0, -1);
-            $rut = str_replace(".", "",$rut);
-            $rut = str_replace("-", "",$rut);
+            $rut = str_replace(".", "", $rut);
+            $rut = str_replace("-", "", $rut);
             $data = [
                 'cliente_rut' => $rut,
                 'cliente_dv' => strtoupper($request->data['cliente_dv']),
@@ -136,8 +142,8 @@ class ClienteController extends Controller
             }
             $cliente = Cliente::find($id);
             $rut = substr($request->data['cliente_rut'], 0, -1);
-            $rut = str_replace(".", "",$rut);
-            $rut = str_replace("-", "",$rut);
+            $rut = str_replace(".", "", $rut);
+            $rut = str_replace("-", "", $rut);
             $cliente->cliente_rut = $rut;
             $cliente->cliente_nombre = strtoupper($request->data['cliente_nombre']);
             $cliente->cliente_apellido_paterno = strtoupper($request->data['cliente_apellido_paterno']);
@@ -156,7 +162,7 @@ class ClienteController extends Controller
     public function details($id)
     {
         try {
-            $cliente = Cliente::find( $id);
+            $cliente = Cliente::find($id);
             return response()->json(['response' => ['status' => true, 'data' => $cliente, 'message' => 'Query success']], 200);
         } catch (\Illuminate\Database\QueryException $e) {
             return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 500);
@@ -195,9 +201,9 @@ class ClienteController extends Controller
             $cliente = Cliente::with('proyecto', 'proyecto.centro_costo')->find($id);
 
             $detalle_solicitud = DetalleSolicitud::where('ds_proyecto_id', $cliente->cliente_proyecto_id)
-            ->where('ds_cliente_id', $cliente->id)
-            ->where('ds_centro_costo_id', $cliente->proyecto->centro_costo->id)
-            ->first();
+                ->where('ds_cliente_id', $cliente->id)
+                ->where('ds_centro_costo_id', $cliente->proyecto->centro_costo->id)
+                ->first();
 
             $solicitud = Solicitud::where('solicitud_detalle_solicitud_id', $detalle_solicitud->id)->get();
 
@@ -212,6 +218,23 @@ class ClienteController extends Controller
             $cliente->delete();
 
             return response()->json(['response' => ['status' => true, 'data' => $cliente, 'message' => 'Cliente Eliminado']], 200);
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 200);
+        }
+    }
+
+    public function informe($id)
+    {
+        try {
+
+            $cliente = Cliente::with('proyecto', 'proyecto.centro_costo')->find($id);
+
+            $fecha = date("d-m-Y-H-i-s");
+            $informeCliente = 'INFORME-CLIENTE-'.$cliente->cliente_nombre.'-'.$cliente->cliente_apellido_paterno."-".$fecha.".xlsx";
+
+            return Excel::download(new ClientesExport($id), $informeCliente);
+
+            /* return response()->json(['response' => ['status' => true, 'data'=> ['productos' => $productos, 'total' => $datoTotal, 'cliente' => $cliente], 'message' => 'Cliente Obtenido']], 200); */
         } catch (\Illuminate\Database\QueryException $e) {
             return response()->json(['response' => ['type_error' => 'query_exception', 'status' => false, 'data' => $e, 'message' => 'Error processing']], 200);
         }
